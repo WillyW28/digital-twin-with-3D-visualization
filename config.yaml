@@ -8,10 +8,27 @@ rst_file: 'data/raw/file.rst'
 twin_disp_file: 'data/raw/twin_disp_file.twin'
 
 # List of operations to perform
-operations:
+available_operations:
+  - displacement:
+    - ux
+    - uy
+    - uz
+    - norm
+  - stress:
+    - seqv
+    - sx
+    - sy
+    - sz
+    - sxy
+    - sxz
+    - syz
+  - fatigue:
+    - cycle
+    - fatigue
+
+operation: 
   - displacement
-  - stress
-  - damage
+  - norm
 
 # Other configuration settings (example)
 mesh_settings:
@@ -27,6 +44,6 @@ initial_value:
 named_selections:
   - Frame
   - Weld
-scoping: weld
+scoping: frame
 autoscale: 200
 deflection: 1

@@ -21,7 +21,8 @@ def main():
     print("++ Initializing the Twin")
     twin_file = os.path.join(os.path.dirname(__file__), config['twin_file'])
     twin_model, tbrom_names = utility.initiate_twin(twin_file=twin_file, rom_inputs=input_data)
-    rom_name = tbrom_names[0]
+    rom_index = 0
+    rom_name = tbrom_names[rom_index]
     
     # Load the rst file and extract the mesh
     print("++ Reading the FEA mesh")
@@ -29,16 +30,19 @@ def main():
     mesh, grid, mesh_unit = utility.extract_mesh(rst_file)
     grid.points = utility.convert_to_meters(grid.points, mesh_unit)    
     
-    # Obtain named selection mesh and result
+    # Obtain named selection scoping mesh 
     print("++ Obtaining named selections")
     scoping = config['scoping']
     named_selections_twin, named_selections_fea = utility.named_selections(twin_model, rom_name , mesh, named_selection=scoping)
-    nstwin, nsfea = utility.scoping(named_selections_twin, named_selections_fea, scoping=scoping)
-    print("scoping: ", scoping)
-    print("named_selections_twin: ",named_selections_twin)
-    print("nstwin: ",nstwin)
-    print("named_selections_fea: ", named_selections_fea)
-    print("nsfea: ",nsfea)
+    nstwin, nsfea, mesh = utility.scoping(named_selections_twin, named_selections_fea, mesh, scoping=scoping)
+    scoping_twin = named_selections_twin[nstwin]
+    scoping_fea = named_selections_fea[nsfea]
+    
+    # Deflect mesh from displacement result
+    print("++ Deflecting mesh")
+    pass
+    
+    # Perform operations based on config
         
 if __name__ == "__main__":
     main()

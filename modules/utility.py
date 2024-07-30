@@ -3,6 +3,9 @@ import ansys.dpf.core as dpf
 import yaml
 import os
 import json
+import numpy as np
+from scipy.spatial.distance import cdist
+
 # from pydpf import Model  # Example import, adjust as needed for PyDPF/PyTwin
 
 def load_config(config_path):
@@ -79,9 +82,10 @@ def scoping(named_selections_twin, named_selections_fea, mesh, scoping=None):
         if scoping_lower in named_selections_fea_lower:
             scoping_fea_index = named_selections_fea_lower.index(scoping_lower)
     
+    scoping_fea = mesh.named_selection(named_selections_fea[scoping_fea_index])
     # Mapping mesh from scoping
     mesh_scoping = dpf.operators.mesh.from_scoping(
-        scoping=named_selections_fea[scoping_fea_index],
+        scoping=scoping_fea ,
         nodes_only=False,
         mesh=mesh
     )
@@ -89,6 +93,34 @@ def scoping(named_selections_twin, named_selections_fea, mesh, scoping=None):
     mesh = mesh_scoping.outputs.mesh()
     
     return scoping_twin_index, scoping_fea_index, mesh
+
+def deflection_scale(percent_def, points, outfield):
+    # Calculates the longest distance between any two points in a given array
+    distances = cdist(points, points)
+    max_distance = np.max(distances)
+
+    # Find highes displacement
+    magnitudes = np.linalg.norm(outfield, axis=1)
+    max_magnitude = np.max(magnitudes)
+
+    scale_factor = (percent_def/100)*(max_distance/max_magnitude)
+    return scale_factor
+    pass
+
+def deflect_mesh(mesh, twin_file, rom_index, scoping_twin, percent_def, rom_parameters=None, rom_inputs=None, field_inputs=None, json_config=None):
+    twin_model, tbrom_names = initiate_twin(twin_file, rom_parameters=None, rom_inputs=None, field_inputs=None, json_config=None)
+    rom_name = tbrom_names[rom_index]
+
+    outfield = twin_model.generate_snapshot(rom_name, on_disk=False, named_selection=scoping_twin)
+    points = twin_model.generate_points(rom_name, on_disk=False, named_selection=scoping_twin)
+
+    scale_factor = deflection_scale(percent_def, points, outfield)
+
+    scaled_disp = outfield * 10
+    mesh.grid.points = mesh.grid.points + scaled_disp*10
+    
+    return mesh
+    pass
 
 def extract_output_parameters(twin, rst_file):
     # Example logic to extract parameters using PyDPF/PyTwin
