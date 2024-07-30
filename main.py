@@ -29,6 +29,17 @@ def main():
     mesh, grid, mesh_unit = utility.extract_mesh(rst_file)
     grid.points = utility.convert_to_meters(grid.points, mesh_unit)    
     
+    # Obtain named selection mesh and result
+    print("++ Obtaining named selections")
+    scoping = config['scoping']
+    named_selections_twin, named_selections_fea = utility.named_selections(twin_model, rom_name , mesh, named_selection=scoping)
+    nstwin, nsfea = utility.scoping(named_selections_twin, named_selections_fea, scoping=scoping)
+    print("scoping: ", scoping)
+    print("named_selections_twin: ",named_selections_twin)
+    print("nstwin: ",nstwin)
+    print("named_selections_fea: ", named_selections_fea)
+    print("nsfea: ",nsfea)
+        
 if __name__ == "__main__":
     main()
 

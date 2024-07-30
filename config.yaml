@@ -24,9 +24,9 @@ inputs:
 outputs:
 initial_value:
   - Force_Magnitude: 3000
-
 named_selections:
   - Frame
   - Weld
+scoping: weld
 autoscale: 200
 deflection: 1

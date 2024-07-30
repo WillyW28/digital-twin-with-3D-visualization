@@ -49,11 +49,46 @@ def convert_to_meters(grid_coord, mesh_unit):
       
     return grid_coord
 
-def named_selection(twin_model, named_selection):
+def named_selections(twin_model, rom_name, mesh, named_selection=None):
     # Checking available named selections from twin
     named_selections_twin = twin_model.get_named_selections(rom_name)
     scoping_twin = named_selections_twin[0]
     
+    # Checking available named selections from fea
+    named_selections_fea = mesh.available_named_selections
+    return named_selections_twin, named_selections_fea
+
+def scoping(named_selections_twin, named_selections_fea, mesh, scoping=None):
+    # Convert the named selections to lowercase for case-insensitive matching
+    named_selections_twin_lower = [name.lower() for name in named_selections_twin]
+    named_selections_fea_lower = [name.lower() for name in named_selections_fea]
+    
+    # Normalize the scoping value
+    scoping_lower = scoping.lower() if scoping else None
+    
+    # Initialize indices
+    scoping_twin_index = None
+    scoping_fea_index = None
+    
+    if scoping_lower:
+        # Find the index in named_selections_twin
+        if scoping_lower in named_selections_twin_lower:
+            scoping_twin_index = named_selections_twin_lower.index(scoping_lower)
+
+        # Find the index in named_selections_fea
+        if scoping_lower in named_selections_fea_lower:
+            scoping_fea_index = named_selections_fea_lower.index(scoping_lower)
+    
+    # Mapping mesh from scoping
+    mesh_scoping = dpf.operators.mesh.from_scoping(
+        scoping=named_selections_fea[scoping_fea_index],
+        nodes_only=False,
+        mesh=mesh
+    )
+    # Get scoped mesh
+    mesh = mesh_scoping.outputs.mesh()
+    
+    return scoping_twin_index, scoping_fea_index, mesh
 
 def extract_output_parameters(twin, rst_file):
     # Example logic to extract parameters using PyDPF/PyTwin
