@@ -4,7 +4,7 @@
 input_dir: 'data/input/'
 output_dir: 'data/output/'
 twin_file: 'data/raw/twin_disp_file.twin'
-rst_file: 'data/raw/model.rst'
+rst_file: 'data/raw/file.rst'
 twin_disp_file: 'data/raw/twin_disp_file.twin'
 
 # List of operations to perform

@@ -9,20 +9,26 @@ from modules import utility
 
 def main():
     # Load configuration
+    print("++ Loading Configuration")
     config_dir =  os.path.join(os.path.dirname(__file__), 'config.yaml')
     config = utility.load_config(config_dir)
     
-    # Collect ROM input data and file directories
+    # Collect ROM input data 
+    print("++ Collecting Input Data")
     input_data = config['initial_value'][0]
     
     # Initiate twin from twin file
+    print("++ Initializing the Twin")
     twin_file = os.path.join(os.path.dirname(__file__), config['twin_file'])
-    print("twin_file: ",twin_file)
-    tbrom_names = utility.initiate_twin(twin_file=twin_file, rom_inputs=input_data)
+    twin_model, tbrom_names = utility.initiate_twin(twin_file=twin_file, rom_inputs=input_data)
     rom_name = tbrom_names[0]
-
     
-
+    # Load the rst file and extract the mesh
+    print("++ Reading the FEA mesh")
+    rst_file = os.path.join(os.path.dirname(__file__), config['rst_file'])
+    mesh, grid, mesh_unit = utility.extract_mesh(rst_file)
+    
+    
 if __name__ == "__main__":
     main()
 
