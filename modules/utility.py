@@ -34,11 +34,25 @@ def extract_mesh(rst_file):
     mesh_unit = mesh.unit
     return mesh, grid, mesh_unit
 
+def convert_to_meters(grid_coord, mesh_unit):
+  # Conversion factors
+    conversion_factors = {'mm': 0.001, 'cm': 0.01, 'm': 1, 'km': 1000}
+
+    if mesh_unit == 'mm':
+        grid_coord = grid_coord * conversion_factors['mm']
+    elif mesh_unit == 'cm':
+        grid_coord = grid_coord * conversion_factors['cm']
+    elif mesh_unit == 'm':
+        grid_coord = grid_coord * conversion_factors['m']
+    elif mesh_unit == 'km':
+        grid_coord = grid_coord * conversion_factors['km']
+      
+    return grid_coord
+
 def named_selection(twin_model, named_selection):
     # Checking available named selections from twin
     named_selections_twin = twin_model.get_named_selections(rom_name)
     scoping_twin = named_selections_twin[0]
-    
     
 
 def extract_output_parameters(twin, rst_file):

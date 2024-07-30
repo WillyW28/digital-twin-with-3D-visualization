@@ -27,7 +27,7 @@ def main():
     print("++ Reading the FEA mesh")
     rst_file = os.path.join(os.path.dirname(__file__), config['rst_file'])
     mesh, grid, mesh_unit = utility.extract_mesh(rst_file)
-    
+    grid.points = utility.convert_to_meters(grid.points, mesh_unit)    
     
 if __name__ == "__main__":
     main()
