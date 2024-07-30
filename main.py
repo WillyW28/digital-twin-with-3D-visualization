@@ -4,16 +4,15 @@ import pyvista as pv
 import os
 import numpy as np
 import pandas as pd
+import json
+from modules import utility
 
-script_dir = os.path.dirname(os.path.abspath(__file__))
-project_dir = os.path.dirname(script_dir)
+def main():
+    # Load configuration
+    config_dir =  os.path.join(os.path.dirname(__file__), 'config.yaml')
+    config = utility.load_config(config_dir)
+    print(config)
 
-data_path = os.path.join(project_dir, 'data')
-models_path = os.path.join(project_dir, 'models')
-modules_path = os.path.join(project_dir, 'modules')
-
-print(os.path.abspath(__file__))
-print(script_dir)
-print(project_dir)
-print(os.path.dirname(project_dir))
+if __name__ == "__main__":
+    main()
 

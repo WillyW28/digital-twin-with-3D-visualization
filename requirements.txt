@@ -1,0 +1,23 @@
+# Core dependencies
+numpy==1.21.0
+pandas==1.3.0
+scipy==1.7.0
+matplotlib==3.4.2
+
+# PyDPF and PyTwin for digital twin modeling
+ansys-dpf-core==0.4.0
+ansys-dpf-post==0.2.0
+pytwin==0.2.0
+
+# PyVista for 3D visualization
+pyvista==0.31.3
+pyvistaqt==0.6.0
+
+# YAML handling
+pyyaml==5.4.1
+
+# JSON handling (usually comes with the standard library, but specifying if needed)
+simplejson==3.17.2
+
+# Other utilities
+requests==2.25.1
