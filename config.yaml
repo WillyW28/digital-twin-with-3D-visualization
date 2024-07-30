@@ -3,7 +3,7 @@
 # Directory paths
 input_dir: 'data/input/'
 output_dir: 'data/output/'
-twin_file: 'data/raw/twin_file.twin'
+twin_file: 'data/raw/twin_disp_file.twin'
 rst_file: 'data/raw/model.rst'
 twin_disp_file: 'data/raw/twin_disp_file.twin'
 
