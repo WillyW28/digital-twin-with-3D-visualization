@@ -1,5 +1,7 @@
 import os
 from modules import utility, displacement, stress, damage
+from scripts import obtain_max_min
+import json
 
 def main():
     # Load configuration
@@ -67,6 +69,23 @@ def main():
     output_dir = os.path.join(os.path.dirname(__file__), config['output_dir'])
     utility.export_to_3d_file(result_mesh, output_type, result_detail, show_edges, output_dir)
 
+    # Obtaining max and min value
+    print("++ Obtaining max and min value")
+    max_result = obtain_max_min.obtain_max(result_data)
+    min_result = obtain_max_min.obtain_min(result_data)
+    max_min_result = {"max": max_result, "min": min_result}
+    output_data_dir = 'data/output/'
+    output_file = 'output_data.json'
+    
+    os.makedirs(output_data_dir, exist_ok=True)
+    output_path = os.path.join(output_data_dir, output_file)
+    
+    with open(output_path, 'w') as f:
+    json.dump(max_min_result, f, indent=4)
+
+    print(f"DataFrames have been exported to {output_path}")
+    
+    
 if __name__ == "__main__":
     main()
 

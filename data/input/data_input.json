@@ -1,13 +1,14 @@
 {
-    "input_parameters": {
+    "twin_inputs": {
         "Force_Magnitude": {
             "value": 3000,
             "unit": "N"
-        },
+        }
+    },
+    "input_parameters": {
         "named_selection": "Frame",
         "operation": ["displacement", "norm"]
     },
-   
     "input_files": {
         "rst_file": "data/raw/model.rst",
         "twin_file": "data/raw/twin_file.twin",
