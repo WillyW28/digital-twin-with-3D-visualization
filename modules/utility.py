@@ -1,9 +1,8 @@
-from pytwin import TwinModel, TwinRuntime
+from pytwin import TwinModel
 import ansys.dpf.core as dpf
 import pyvista as pv
 import yaml
 import os
-import json
 import numpy as np
 from scipy.spatial.distance import cdist
 
@@ -155,27 +154,17 @@ def project_result_on_mesh(result, grid, result_type):
 def plot_result (inter_grid, show_edges=True):
     inter_grid.plot(show_edges=show_edges)  # Plot the interpolated data on MAPDL grid
 
-def extract_output_parameters(twin, rst_file):
-    # Example logic to extract parameters using PyDPF/PyTwin
-    model = Model(rst_file)
-    unit = model.metadata.result_info.unit  # Example to get unit, adjust as needed
-    named_selections = model.metadata.named_selections  # Example to get named selections, adjust as needed
-    return {
-        'unit': unit,
-        'named_selections': named_selections
-    }
-
-def export_results(result_data, output_dir, result_type, output_parameters):
-    result_dir = os.path.join(output_dir, result_type)
-    os.makedirs(result_dir, exist_ok=True)
-    result_file = os.path.join(result_dir, 'results.json')
-    with open(result_file, 'w') as file:
-        json.dump(result_data, file)
-    # Additional logic to handle output_parameters if needed
-    if output_parameters.get('export_max_min'):
-        max_min_file = os.path.join(result_dir, 'max_min.json')
-        with open(max_min_file, 'w') as file:
-            json.dump({"max": max(result_data), "min": min(result_data)}, file)
-
-def testprint():
-    print("test")
+def export_to_3d_file(inter_grid, output_type, result_detail, show_edges, output_dir):
+    plotter = pv.Plotter()
+    plotter.add_mesh(inter_grid, show_edges=show_edges)
+    
+    output_file = os.path.join(output_dir, result_detail)
+    
+    if output_type == 'gltf':
+        plotter.export_gltf(f"{output_file}.gltf")
+    elif output_type == 'vrml':
+        plotter.export_vrml(f"{output_file}.wrl")
+    elif output_type == 'obj':
+        plotter.export_obj(f"{output_file}.obj")
+    else:
+        raise ValueError("Invalid output type. Please provide 'gltf', 'vrml', or 'obj'.") 

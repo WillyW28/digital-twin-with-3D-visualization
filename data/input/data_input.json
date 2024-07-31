@@ -1,0 +1,27 @@
+{
+    "input_parameters": {
+        "Force_Magnitude": {
+            "value": 3000,
+            "unit": "N"
+        },
+        "named_selection": "Frame",
+        "operation": ["displacement", "norm"]
+    },
+   
+    "input_files": {
+        "rst_file": "data/raw/model.rst",
+        "twin_file": "data/raw/twin_file.twin",
+        "sn_curve_file": "data/raw/sn_curve.csv"
+    },
+    "output_files": {
+        "data_file": {
+            "output_data": "data/output/data/output_file.json"
+        },
+        "3d_file": {
+            "output_3d_dir": "data/output/3d/",
+            "output_format": "gltf",
+            "show_edges": true
+        }
+        
+    }
+}

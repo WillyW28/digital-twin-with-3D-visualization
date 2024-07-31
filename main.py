@@ -1,10 +1,4 @@
-import ansys.dpf.core as dpf
-
-import pyvista as pv
 import os
-import numpy as np
-import pandas as pd
-import json
 from modules import utility, displacement, stress, damage
 
 def main():
@@ -66,6 +60,12 @@ def main():
     print("++ Plotting result")
     show_edges = config['mesh_settings']['show_edges']
     utility.plot_result(result_mesh, show_edges)
+
+    # Export to 3d format
+    print("++ Exporting result")
+    output_type = config['mesh_settings']['format']
+    output_dir = os.path.join(os.path.dirname(__file__), config['output_dir'])
+    utility.export_to_3d_file(result_mesh, output_type, result_detail, show_edges, output_dir)
 
 if __name__ == "__main__":
     main()
