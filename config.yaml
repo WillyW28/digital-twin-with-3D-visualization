@@ -12,7 +12,7 @@ available_operations:
   - displacement:
     - ux
     - uy
-    - uz
+    - uzW
     - norm
   - stress:
     - von_mises

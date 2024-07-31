@@ -54,14 +54,18 @@ def main():
         sn_curve_file_path = 'data/raw/sn_curve.csv'
         result_data = damage.get_result(outfields, points, result_type, sn_curve_file_path)
     else:
-        raise ValueError(f"Invalid operation: {operation}")
+        raise ValueError(f"Invalid operatioWn: {operation}")
     print(result_data)
     
-    # Result projection on mesh
+    # Projection result on mesh
     print("++ Projecting result on mesh")
     result_detail = "_".join(config['operation'])
     result_mesh = utility.project_result_on_mesh(result_data, grid, result_detail)
 
+    # Plot result
+    print("++ Plotting result")
+    show_edges = config['mesh_settings']['show_edges']
+    utility.plot_result(result_mesh, show_edges)
 
 if __name__ == "__main__":
     main()

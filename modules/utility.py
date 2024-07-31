@@ -146,13 +146,14 @@ def project_result_on_mesh(result, grid, result_type):
     inter_grid = grid.interpolate(
     wrapped, sharpness=5, radius=0.0001, strategy="closest_point", progress_bar=True)  # Map the imported data to MAPDL grid
     
-    inter_grid.plot(show_edges=True)  # Plot the interpolated data on MAPDL grid
     temperature_load_val = pv.convert_array(
         pv.convert_array(inter_grid.active_scalars)
     )  # Save temperatures interpolated to each node as a NumPy array\
     
     return inter_grid
 
+def plot_result (inter_grid, show_edges=True):
+    inter_grid.plot(show_edges=show_edges)  # Plot the interpolated data on MAPDL grid
 
 def extract_output_parameters(twin, rst_file):
     # Example logic to extract parameters using PyDPF/PyTwin
