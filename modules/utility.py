@@ -122,6 +122,16 @@ def deflect_mesh(mesh, twin_file, rom_index, scoping_twin, percent_def, rom_para
     return mesh
     pass
 
+def get_result(twin_model, rom_name, scoping_twin=None):
+    # Get result data and point coordinates
+    outfield = twin_model.generate_snapshot(rom_name, on_disk=False, named_selection=scoping_twin)
+    points = twin_model.generate_points(rom_name, on_disk=False, named_selection=scoping_twin)
+    return outfield, points
+
+def unflatten_vector(vector: np.ndarray, dimensionality: int):
+    # Unflatten a vector to array with specified number of columns
+    return vector.reshape(-1, dimensionality)
+
 def extract_output_parameters(twin, rst_file):
     # Example logic to extract parameters using PyDPF/PyTwin
     model = Model(rst_file)
@@ -144,3 +154,5 @@ def export_results(result_data, output_dir, result_type, output_parameters):
         with open(max_min_file, 'w') as file:
             json.dump({"max": max(result_data), "min": min(result_data)}, file)
 
+def testprint():
+    print("test")

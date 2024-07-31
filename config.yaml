@@ -3,7 +3,7 @@
 # Directory paths
 input_dir: 'data/input/'
 output_dir: 'data/output/'
-twin_file: 'data/raw/twin_disp_file.twin'
+twin_file: 'data/raw/twin_str_file.twin'
 rst_file: 'data/raw/file.rst'
 twin_disp_file: 'data/raw/twin_disp_file.twin'
 
@@ -20,15 +20,15 @@ available_operations:
     - sy
     - sz
     - sxy
-    - sxz
     - syz
+    - sxz
   - fatigue:
     - cycle
-    - fatigue
+    - damage
 
 operation: 
-  - displacement
-  - norm
+  - stress
+  - seqv
 
 # Other configuration settings (example)
 mesh_settings:

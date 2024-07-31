@@ -5,7 +5,7 @@ import os
 import numpy as np
 import pandas as pd
 import json
-from modules import utility
+from modules import utility, displacement, stress, damage
 
 def main():
     # Load configuration
@@ -43,7 +43,20 @@ def main():
     pass
     
     # Perform operations based on config
-        
+    operation, result_type = config["operation"]
+    outfields, points = utility.get_result(twin_model, rom_name, scoping_twin=scoping_twin)
+    if operation == 'displacement':
+        result_data = displacement.get_result(outfields, points, result_type)
+    elif operation == 'stress':
+        result_data = stress.get_result(outfields, points, result_type)
+    elif operation == 'fatigue':
+        sn_curve_file_path = 'data/raw/sn_curve.csv'
+        result_data = damage.get_result(outfields, points, result_type, sn_curve_file_path)
+    else:
+        raise ValueError(f"Invalid operation: {operation}")
+
+    print(result_data)
+
 if __name__ == "__main__":
     main()
 
