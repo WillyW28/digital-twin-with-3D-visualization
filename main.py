@@ -28,7 +28,7 @@ def main():
     print("++ Reading the FEA mesh")
     rst_file = os.path.join(os.path.dirname(__file__), config['rst_file'])
     mesh, grid, mesh_unit = utility.extract_mesh(rst_file)
-    grid.points = utility.convert_to_meters(grid.points, mesh_unit)    
+    
     
     # Obtain named selection scoping mesh 
     print("++ Obtaining named selections")
@@ -37,6 +37,7 @@ def main():
     nstwin, nsfea, mesh = utility.scoping(named_selections_twin, named_selections_fea, mesh, scoping=scoping)
     scoping_twin = named_selections_twin[nstwin]
     scoping_fea = named_selections_fea[nsfea]
+    grid.points = utility.convert_to_meters(grid.points, mesh_unit)    
     
     # Deflect mesh from displacement result
     print("++ Deflecting mesh")
@@ -54,8 +55,13 @@ def main():
         result_data = damage.get_result(outfields, points, result_type, sn_curve_file_path)
     else:
         raise ValueError(f"Invalid operation: {operation}")
-
     print(result_data)
+    
+    # Result projection on mesh
+    print("++ Projecting result on mesh")
+    result_detail = "_".join(config['operation'])
+    result_mesh = utility.project_result_on_mesh(result_data, grid, result_detail)
+
 
 if __name__ == "__main__":
     main()

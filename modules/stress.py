@@ -33,24 +33,24 @@ def get_result(outfield, points, result_type):
             "z": loc_xyz[:, 2],
     }
     
-    if result_type == "sx":
+    if result_type == "xx":
         base_data["result"] = results[:, 0]
-    elif result_type == "sy":
+    elif result_type == "yy":
         base_data["result"] = results[:, 1]
-    elif result_type == "sz":
+    elif result_type == "zz":
         base_data["result"] = results[:, 2]
-    elif result_type == "sxx":
+    elif result_type == "xy":
         base_data["result"] = results[:, 3]
-    elif result_type == "syz":
+    elif result_type == "yz":
         base_data["result"] = results[:, 4]
-    elif result_type == "sxz":
+    elif result_type == "xz":
         base_data["result"] = results[:, 5]
-    elif result_type == "seqv":
+    elif result_type == "von_mises":
         vm = calculate_von_mises(outfield)
         base_data["result"] = vm
     else:
         raise ValueError("Invalid result_type")    
     
     
-    return pd.DataFrame(base_data), outfield
+    return pd.DataFrame(base_data)
 

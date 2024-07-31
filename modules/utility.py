@@ -1,5 +1,6 @@
 from pytwin import TwinModel, TwinRuntime
 import ansys.dpf.core as dpf
+import pyvista as pv
 import yaml
 import os
 import json
@@ -131,6 +132,27 @@ def get_result(twin_model, rom_name, scoping_twin=None):
 def unflatten_vector(vector: np.ndarray, dimensionality: int):
     # Unflatten a vector to array with specified number of columns
     return vector.reshape(-1, dimensionality)
+
+def project_result_on_mesh(result, grid, result_type):
+    # Convert imported data into NumPy array
+    result_data = result.values
+    nd_result_data = result_data[:,:].astype(float) 
+    
+    # Convert imported data into PolyData format
+    wrapped = pv.PolyData(nd_result_data[:, :3])  
+    wrapped[result_type] = nd_result_data[:, 3]  
+
+    # Map the imported data to MAPDL grid
+    inter_grid = grid.interpolate(
+    wrapped, sharpness=5, radius=0.0001, strategy="closest_point", progress_bar=True)  # Map the imported data to MAPDL grid
+    
+    inter_grid.plot(show_edges=True)  # Plot the interpolated data on MAPDL grid
+    temperature_load_val = pv.convert_array(
+        pv.convert_array(inter_grid.active_scalars)
+    )  # Save temperatures interpolated to each node as a NumPy array\
+    
+    return inter_grid
+
 
 def extract_output_parameters(twin, rst_file):
     # Example logic to extract parameters using PyDPF/PyTwin

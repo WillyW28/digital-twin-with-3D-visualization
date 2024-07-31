@@ -3,7 +3,7 @@
 # Directory paths
 input_dir: 'data/input/'
 output_dir: 'data/output/'
-twin_file: 'data/raw/twin_str_file.twin'
+twin_file: 'data/raw/twin_disp_file.twin'
 rst_file: 'data/raw/file.rst'
 twin_disp_file: 'data/raw/twin_disp_file.twin'
 
@@ -15,20 +15,20 @@ available_operations:
     - uz
     - norm
   - stress:
-    - seqv
-    - sx
-    - sy
-    - sz
-    - sxy
-    - syz
-    - sxz
+    - von_mises
+    - xx
+    - yy
+    - zz
+    - xy
+    - yz
+    - xz
   - fatigue:
     - cycle
     - damage
 
 operation: 
-  - stress
-  - seqv
+  - displacement
+  - norm
 
 # Other configuration settings (example)
 mesh_settings:
@@ -40,7 +40,7 @@ inputs:
   - Force_Magnitude
 outputs:
 initial_value:
-  - Force_Magnitude: 3000
+  - Force_Magnitude: 4000
 named_selections:
   - Frame
   - Weld
