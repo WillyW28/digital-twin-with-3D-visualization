@@ -21,7 +21,8 @@
     "output_files": {
         "output_dir": "data/output/",
         "data_file": {
-            "output_data": "data/output/data/output_file.json"
+            "output_data": "data/output/output_file.json",
+            "field_data": "field_data.json"
         },
         "3d_file": {
             "output_3d_dir": "data/output/3d/",

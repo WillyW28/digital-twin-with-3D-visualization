@@ -100,10 +100,9 @@ def convert_to_meters(grid_coord, mesh_unit):
       
     return grid_coord
 
-def named_selections(twin_model, rom_name, mesh, named_selection=None):
+def named_selections(twin_model, rom_name, mesh):
     # Checking available named selections from twin
     named_selections_twin = twin_model.get_named_selections(rom_name)
-    scoping_twin = named_selections_twin[0]
     
     # Checking available named selections from fea
     named_selections_fea = mesh.available_named_selections
@@ -202,7 +201,13 @@ def project_result_on_mesh(result, grid, result_type):
 def plot_result (inter_grid, show_edges=True):
     inter_grid.plot(show_edges=show_edges)  # Plot the interpolated data on MAPDL grid
 
-def export_to_3d_file(inter_grid, output_type, result_detail, show_edges, output_dir):
+def export_to_3d_file(inter_grid, output_dir, input_data):
+    # Get input parameters
+    output_type = input_data["output_files"]["3d_file"]["output_format"]
+    result_detail = "_".join(input_data["input_parameters"]["operation"])
+    show_edges = input_data["output_files"]["3d_file"]["show_edges"]
+    
+    # Export to 3D file
     plotter = pv.Plotter()
     plotter.add_mesh(inter_grid, show_edges=show_edges)
     
@@ -217,7 +222,7 @@ def export_to_3d_file(inter_grid, output_type, result_detail, show_edges, output
     else:
         raise ValueError("Invalid output type. Please provide 'gltf', 'vrml', or 'obj'.") 
     
-def export_output_data_to_json(twin_outputs, output_parameters, output_dir):
+def export_output_data_to_json(output_file, twin_outputs=None, output_parameters=None):
     # Structure the data in a dictionary
     data = {
         "twin_outputs": twin_outputs,
@@ -225,7 +230,6 @@ def export_output_data_to_json(twin_outputs, output_parameters, output_dir):
     }
     
     # Write the dictionary to a JSON file
-    output_file = os.path.join(output_dir, "output_data.json")
     with open(output_file, "w") as f:
         json.dump(data, f)
     return output_file

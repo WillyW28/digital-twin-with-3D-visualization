@@ -26,7 +26,7 @@ def calculate_damage(stress_array, sn_curve_file_path):
     damage = 1 / cycles_to_failure
     return damage
 
-def get_result(outfields, points, result_type, sn_curve_file_path):
+def get_result(input_data, outfields, points, sn_curve_file_path):
     # Get displacement result
     loc_xyz = utility.unflatten_vector(points, 3)
     stress_data = stress.get_result(outfields, points, "von_mises")
@@ -35,13 +35,15 @@ def get_result(outfields, points, result_type, sn_curve_file_path):
             "y": loc_xyz[:, 1],
             "z": loc_xyz[:, 2],
     }
+    result_type = input_data["input_parameters"]["operation"][1]
+    result_detail = "_".join(input_data["input_parameters"]["operation"])
     
     if result_type == "cycle":
         cycle_data = calculate_cycles_to_failure(stress_data, sn_curve_file_path)
-        base_data["result"] = cycle_data
+        base_data[result_detail] = cycle_data
     elif result_type == "damage":
         damage_data = calculate_damage(stress_data, sn_curve_file_path)
-        base_data["result"] = damage_data
+        base_data[result_detail] = damage_data
     else:
         raise ValueError("Invalid result_type")    
     

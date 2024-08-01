@@ -22,7 +22,7 @@ def calculate_von_mises(stress_array):
     
     return np.array(von_mises_stresses)
     
-def get_result(outfield, points, result_type):
+def get_result(input_data, outfield, points):
     # Get displacement result
     results = utility.unflatten_vector(outfield, 6)
     loc_xyz = utility.unflatten_vector(points, 3)
@@ -33,21 +33,24 @@ def get_result(outfield, points, result_type):
             "z": loc_xyz[:, 2],
     }
     
+    result_type = input_data["input_parameters"]["operation"][1]
+    result_detail = "_".join(input_data["input_parameters"]["operation"])
+    
     if result_type == "xx":
-        base_data["result"] = results[:, 0]
+        base_data[result_detail] = results[:, 0]
     elif result_type == "yy":
-        base_data["result"] = results[:, 1]
+        base_data[result_detail] = results[:, 1]
     elif result_type == "zz":
-        base_data["result"] = results[:, 2]
+        base_data[result_detail] = results[:, 2]
     elif result_type == "xy":
-        base_data["result"] = results[:, 3]
+        base_data[result_detail] = results[:, 3]
     elif result_type == "yz":
-        base_data["result"] = results[:, 4]
+        base_data[result_detail] = results[:, 4]
     elif result_type == "xz":
-        base_data["result"] = results[:, 5]
+        base_data[result_detail] = results[:, 5]
     elif result_type == "von_mises":
         vm = calculate_von_mises(outfield)
-        base_data["result"] = vm
+        base_data[result_detail] = vm
     else:
         raise ValueError("Invalid result_type")    
     

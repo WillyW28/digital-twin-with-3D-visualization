@@ -33,7 +33,7 @@ def main():
     # Obtain named selection scoping mesh 
     print("++ Obtaining named selections")
     scoping = input_data['input_parameters']['named_selection']
-    named_selections_twin, named_selections_fea = utility.named_selections(twin_model, rom_name ,mesh, named_selection=scoping)
+    named_selections_twin, named_selections_fea = utility.named_selections(twin_model, rom_name, mesh)
     nstwin, nsfea, mesh = utility.scoping(named_selections_twin, named_selections_fea, mesh, scoping=scoping)
     scoping_twin = named_selections_twin[nstwin]
     scoping_fea = named_selections_fea[nsfea]
@@ -47,12 +47,12 @@ def main():
     operation, result_type = input_data["input_parameters"]["operation"]
     outfields, points = utility.get_result(twin_model, rom_name, scoping_twin=scoping_twin)
     if operation == 'displacement':
-        result_data = displacement.get_result(outfields, points, result_type)
+        result_data = displacement.get_result(input_data, outfields, points)
     elif operation == 'stress':
-        result_data = stress.get_result(outfields, points, result_type)
+        result_data = stress.get_result(input_data, outfields, points)
     elif operation == 'fatigue':
         sn_curve_file_path = input_data['input_files']['sn_curve_file']
-        result_data = damage.get_result(outfields, points, result_type, sn_curve_file_path)
+        result_data = damage.get_result(input_data, outfields, points, sn_curve_file_path)
     else:
         raise ValueError(f"Invalid operation: {operation}")
     
@@ -68,9 +68,8 @@ def main():
 
     # Export to 3d format
     print("++ Exporting result")
-    output_type = config['mesh_settings']['format']
-    output_dir = os.path.join(os.path.dirname(__file__), input_data["output_files"]["output_dir"])
-    utility.export_to_3d_file(result_mesh, output_type, result_detail, show_edges, output_dir)
+    output_3d_dir = os.path.join(os.path.dirname(__file__), input_data["output_files"]["3d_file"]["output_3d_dir"])
+    utility.export_to_3d_file(result_mesh, output_3d_dir, input_data)
 
     # Obtaining max and min value
     print("++ Obtaining max and min value")
@@ -80,14 +79,16 @@ def main():
     
     # Export to output_data.json
     print("++ Exporting to output_data.json")
-    output_data_dir = 'data/output/'
-    output_path = utility.export_output_data_to_json(twin_outputs, max_min_result, output_data_dir)
+    output_data_path = os.path.join(os.path.dirname(__file__), input_data["output_files"]["data_file"]["output_data"])
+    output_path = utility.export_output_data_to_json(output_data_path, twin_outputs=twin_outputs, output_parameters=max_min_result)
     print(f"DataFrames have been exported to {output_path}")
     
     # Export to result_field.json
     print("++ Exporting to result_field.json")
-    result_field_dir = 'data/output/'
-    result_field_path = os.path.join(result_field_dir, 'output.json')
+    output_dir = input_data["output_files"]["output_dir"]
+    field_data_name =  result_detail +"_"+ input_data["output_files"]["data_file"]["field_data"]
+    result_field_path = os.path.join(os.path.dirname(__file__), output_dir, field_data_name)
+   
     # Export DataFrame to JSON
     result_data.to_json(result_field_path, orient='records', lines=True)
     print(f"DataFrames have been exported to {result_field_path}")
