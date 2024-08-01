@@ -21,6 +21,7 @@ def main():
     twin_model, tbrom_names = utility.initiate_twin(input_data, twin_file_dir)
     rom_index = input_data['input_parameters']['rom_index']
     rom_name = tbrom_names[rom_index]
+    twin_outputs = twin_model.outputs
     
     # Load the rst file and extract the mesh
     print("++ Reading the FEA mesh")
@@ -31,8 +32,8 @@ def main():
     
     # Obtain named selection scoping mesh 
     print("++ Obtaining named selections")
-    scoping = config['scoping']
-    named_selections_twin, named_selections_fea = utility.named_selections(twin_model, rom_name , mesh, named_selection=scoping)
+    scoping = input_data['input_parameters']['named_selection']
+    named_selections_twin, named_selections_fea = utility.named_selections(twin_model, rom_name ,mesh, named_selection=scoping)
     nstwin, nsfea, mesh = utility.scoping(named_selections_twin, named_selections_fea, mesh, scoping=scoping)
     scoping_twin = named_selections_twin[nstwin]
     scoping_fea = named_selections_fea[nsfea]
@@ -43,33 +44,32 @@ def main():
     pass
     
     # Perform operations based on config
-    operation, result_type = config["operation"]
+    operation, result_type = input_data["input_parameters"]["operation"]
     outfields, points = utility.get_result(twin_model, rom_name, scoping_twin=scoping_twin)
     if operation == 'displacement':
         result_data = displacement.get_result(outfields, points, result_type)
     elif operation == 'stress':
         result_data = stress.get_result(outfields, points, result_type)
     elif operation == 'fatigue':
-        sn_curve_file_path = 'data/raw/sn_curve.csv'
+        sn_curve_file_path = input_data['input_files']['sn_curve_file']
         result_data = damage.get_result(outfields, points, result_type, sn_curve_file_path)
     else:
-        raise ValueError(f"Invalid operatioWn: {operation}")
-    print(result_data)
+        raise ValueError(f"Invalid operation: {operation}")
     
     # Projection result on mesh
     print("++ Projecting result on mesh")
-    result_detail = "_".join(config['operation'])
+    result_detail = "_".join(input_data["input_parameters"]["operation"])
     result_mesh = utility.project_result_on_mesh(result_data, grid, result_detail)
 
     # Plot result
     print("++ Plotting result")
-    show_edges = config['mesh_settings']['show_edges']
+    show_edges = input_data["output_files"]["3d_file"]["show_edges"]
     utility.plot_result(result_mesh, show_edges)
 
     # Export to 3d format
     print("++ Exporting result")
     output_type = config['mesh_settings']['format']
-    output_dir = os.path.join(os.path.dirname(__file__), config['output_dir'])
+    output_dir = os.path.join(os.path.dirname(__file__), input_data["output_files"]["output_dir"])
     utility.export_to_3d_file(result_mesh, output_type, result_detail, show_edges, output_dir)
 
     # Obtaining max and min value

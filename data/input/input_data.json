@@ -19,6 +19,7 @@
         "sn_curve_file": "data/raw/sn_curve.csv"
     },
     "output_files": {
+        "output_dir": "data/output/",
         "data_file": {
             "output_data": "data/output/data/output_file.json"
         },
