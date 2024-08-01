@@ -4,6 +4,7 @@ import pyvista as pv
 import yaml
 import os
 import numpy as np
+import json
 from scipy.spatial.distance import cdist
 
 # from pydpf import Model  # Example import, adjust as needed for PyDPF/PyTwin
@@ -12,20 +13,67 @@ def load_config(config_path):
     # Load the configuration file
     with open(config_path, 'r') as file:
         return yaml.safe_load(file)
+    
+def load_json(json_path):
+    # Load json file
+    with open(json_path, 'r') as file:
+        return json.load(file)
 
-def initiate_twin(twin_file, rom_parameters=None, rom_inputs=None, field_inputs=None, json_config=None):
+def twin_file_handler(input_data, config):
+    # Implement logic to handle input file
+    operation = input_data['input_parameters']['operation'][0]
+    
+    # Extract the keys from available_operations
+    available_operations = []
+    for item in config['available_operations']:
+        available_operations.extend(list(item.keys()))
+        
+    # Determine the correct twin file key based on the operation
+    twin_file_key = 'stress' if operation == 'fatigue' else operation
+    
+    if twin_file_key in available_operations:
+        twin_file = input_data['input_files']['twin_file'][twin_file_key]
+    else:
+        twin_file = None
+        print(f"Invalid operation: {operation}. Available operations: {available_operations}")
+    return twin_file
+
+    
+def initiate_twin(input_data, twin_file):
+    # Initialize other parameters to None
+    rom_parameters = None
+    rom_inputs = None
+    field_inputs = None
+
+    # Extract potential inputs if they exist
+    twin_inputs = input_data.get('twin_inputs', {})
+    
+    if 'rom_parameters' in twin_inputs:
+        rom_parameters = twin_inputs['rom_parameters']
+    
+    if 'rom_inputs' in twin_inputs:
+        rom_inputs = twin_inputs['rom_inputs']
+    
+    if 'field_inputs' in twin_inputs:
+        field_inputs = twin_inputs['field_inputs']
+        
+    if 'json_config' in twin_inputs:
+        json_config = twin_inputs['json_config']
+        
     # Implement logic to initiate twin from twin file
     twin_model = TwinModel(twin_file)
     try:
-        twin_model.initialize_evaluation(parameters=rom_parameters, inputs=rom_inputs, field_inputs=field_inputs, json_config_filepath=json_config)
+        twin_model.initialize_evaluation(parameters=rom_parameters, inputs=rom_inputs, field_inputs=field_inputs, json_config_filepath=None)
         tbrom_names = twin_model.tbrom_names
         print("+++ Twin Initialization Successful")
     except Exception as e:
+        twin_model = None
         tbrom_names = None
         print(f"Error initiating twin: {e}")
     return twin_model, tbrom_names
 
-def extract_mesh(rst_file):
+def extract_mesh(rst_file):  
+    
     # Load the Mechanical rst file through PyDPF and extract the mesh
     ds = dpf.DataSources()
     ds.set_result_file_path(rst_file)
@@ -168,3 +216,16 @@ def export_to_3d_file(inter_grid, output_type, result_detail, show_edges, output
         plotter.export_obj(f"{output_file}.obj")
     else:
         raise ValueError("Invalid output type. Please provide 'gltf', 'vrml', or 'obj'.") 
+    
+def export_output_data_to_json(twin_outputs, output_parameters, output_dir):
+    # Structure the data in a dictionary
+    data = {
+        "twin_outputs": twin_outputs,
+        "output_parameters": output_parameters
+    }
+    
+    # Write the dictionary to a JSON file
+    output_file = os.path.join(output_dir, "output_data.json")
+    with open(output_file, "w") as f:
+        json.dump(data, f)
+    return output_file

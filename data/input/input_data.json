@@ -1,17 +1,21 @@
 {
     "twin_inputs": {
-        "Force_Magnitude": {
-            "value": 3000,
-            "unit": "N"
+        "rom_inputs": {
+            "Force_Magnitude": 3000
         }
     },
     "input_parameters": {
+        "rom_index" : 0,
         "named_selection": "Frame",
         "operation": ["displacement", "norm"]
     },
     "input_files": {
-        "rst_file": "data/raw/model.rst",
-        "twin_file": "data/raw/twin_file.twin",
+        "rst_file": "data/raw/file.rst",
+        "twin_file": {
+            "displacement" : "data/raw/twin_file_dsp.twin",
+            "stress" : "data/raw/twin_file_str.twin"
+        },
+  
         "sn_curve_file": "data/raw/sn_curve.csv"
     },
     "output_files": {

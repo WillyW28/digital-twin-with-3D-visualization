@@ -37,7 +37,11 @@ mesh_settings:
 
 # Parameters
 inputs:
-  - Force_Magnitude
+  - Force_Magnitude:
+    - initial_value: 4000
+    - unit: 'N'
+    - minimum_value: 0
+    - maximum_value: 10000
 outputs:
 initial_value:
   - Force_Magnitude: 4000

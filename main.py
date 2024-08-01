@@ -1,7 +1,6 @@
 import os
 from modules import utility, displacement, stress, damage
 from scripts import obtain_max_min
-import json
 
 def main():
     # Load configuration
@@ -9,22 +8,26 @@ def main():
     config_dir =  os.path.join(os.path.dirname(__file__), 'config.yaml')
     config = utility.load_config(config_dir)
     
-    # Collect ROM input data 
-    print("++ Collecting Input Data")
-    input_data = config['initial_value'][0]
+    # Load data_input
+    print("++ Loading Data Input")
+    input_file_dir = "data/input/"
+    input_dir =  os.path.join(os.path.dirname(__file__), input_file_dir, 'input_data.json')
+    input_data = utility.load_json(input_dir)
     
     # Initiate twin from twin file
     print("++ Initializing the Twin")
-    twin_file = os.path.join(os.path.dirname(__file__), config['twin_file'])
-    twin_model, tbrom_names = utility.initiate_twin(twin_file=twin_file, rom_inputs=input_data)
-    rom_index = 0
+    twin_file = utility.twin_file_handler(input_data, config) 
+    twin_file_dir = config_dir =  os.path.join(os.path.dirname(__file__), twin_file)
+    twin_model, tbrom_names = utility.initiate_twin(input_data, twin_file_dir)
+    rom_index = input_data['input_parameters']['rom_index']
     rom_name = tbrom_names[rom_index]
     
     # Load the rst file and extract the mesh
     print("++ Reading the FEA mesh")
-    rst_file = os.path.join(os.path.dirname(__file__), config['rst_file'])
-    mesh, grid, mesh_unit = utility.extract_mesh(rst_file)
-    
+    rst_file = input_data['input_files']['rst_file']
+    rst_file_dir =  os.path.join(os.path.dirname(__file__), rst_file)
+    mesh, grid, mesh_unit = utility.extract_mesh(rst_file_dir)
+
     
     # Obtain named selection scoping mesh 
     print("++ Obtaining named selections")
@@ -74,17 +77,20 @@ def main():
     max_result = obtain_max_min.obtain_max(result_data)
     min_result = obtain_max_min.obtain_min(result_data)
     max_min_result = {"max": max_result, "min": min_result}
+    
+    # Export to output_data.json
+    print("++ Exporting to output_data.json")
     output_data_dir = 'data/output/'
-    output_file = 'output_data.json'
-    
-    os.makedirs(output_data_dir, exist_ok=True)
-    output_path = os.path.join(output_data_dir, output_file)
-    
-    with open(output_path, 'w') as f:
-    json.dump(max_min_result, f, indent=4)
-
+    output_path = utility.export_output_data_to_json(twin_outputs, max_min_result, output_data_dir)
     print(f"DataFrames have been exported to {output_path}")
     
+    # Export to result_field.json
+    print("++ Exporting to result_field.json")
+    result_field_dir = 'data/output/'
+    result_field_path = os.path.join(result_field_dir, 'output.json')
+    # Export DataFrame to JSON
+    result_data.to_json(result_field_path, orient='records', lines=True)
+    print(f"DataFrames have been exported to {result_field_path}")
     
 if __name__ == "__main__":
     main()
