@@ -6,8 +6,8 @@
     },
     "input_parameters": {
         "rom_index" : 0,
-        "named_selection": "Frame",
-        "operation": ["displacement", "ua"],
+        "named_selection": "All_Body",
+        "operation": ["stress", "xz"],
         "deformation_scale": "0.5 Auto"
     },
     "input_files": {

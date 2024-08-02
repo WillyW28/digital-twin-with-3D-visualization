@@ -19,7 +19,40 @@ def load_json(json_path):
     with open(json_path, 'r') as file:
         return json.load(file)
 
-
+def validate_parameters(json_data, yaml_config):
+    input_params = json_data['input_parameters']
+    
+    rom_index = input_params['rom_index']
+    if rom_index not in yaml_config['available_roms']:
+        raise ValueError(f"Error: ROM index '{rom_index}' is not valid. Available ROMs: {yaml_config['available_roms']}")
+    
+    # Validate 'named_selection'
+    named_selection = input_params['named_selection']
+    if named_selection not in yaml_config['availabe_named_selections']:
+        raise ValueError(f"Error: Named selection '{named_selection}' is not valid. Available named selections: {yaml_config['availabe_named_selections']}")
+    
+    # Validate 'operation'
+    operation = input_params['operation']
+    if len(operation) != 2:
+        raise ValueError(f"Error: Operation '{operation}' should have two parts.")
+    
+    parent_operation, child_operation = operation
+    valid_operation = False
+    for op_dict in yaml_config['available_operations']:
+        if parent_operation in op_dict and child_operation in op_dict[parent_operation]:
+            valid_operation = True
+            break
+    
+    if not valid_operation:
+        raise ValueError(f"Error: Operation '{parent_operation}_{child_operation}' is not valid. Available operations: {yaml_config['available_operations']}")
+    
+    # Validate 'deformation_scale'
+    deformation_scale = input_params['deformation_scale']
+    if deformation_scale not in yaml_config['available_deformation_scale']:
+        raise ValueError(f"Error: Deformation scale '{deformation_scale}' is not valid. Available deformation scale: {yaml_config['available_deformation_scale']}")
+    
+    print("-- All input parameters are valid.")
+    return True
 
 def twin_file_handler(input_data, config):
     # Implement logic to handle input file
@@ -67,7 +100,7 @@ def initiate_twin(input_data, twin_file):
     try:
         twin_model.initialize_evaluation(parameters=rom_parameters, inputs=rom_inputs, field_inputs=field_inputs, json_config_filepath=None)
         tbrom_names = twin_model.tbrom_names
-        print("+++ Twin Initialization Successful")
+        print("-- Twin Initialization Successful")
     except Exception as e:
         twin_model = None
         tbrom_names = None
@@ -131,15 +164,15 @@ def scoping(named_selections_twin, named_selections_fea, mesh, scoping=None):
         if scoping_lower in named_selections_fea_lower:
             scoping_fea_index = named_selections_fea_lower.index(scoping_lower)
     
-    scoping_fea = mesh.named_selection(named_selections_fea[scoping_fea_index])
-    # Mapping mesh from scoping
-    mesh_scoping = dpf.operators.mesh.from_scoping(
-        scoping=scoping_fea ,
-        nodes_only=False,
-        mesh=mesh
-    )
-    # Get scoped mesh
-    mesh = mesh_scoping.outputs.mesh()
+        scoping_fea = mesh.named_selection(named_selections_fea[scoping_fea_index])
+        # Mapping mesh from scoping
+        mesh_scoping = dpf.operators.mesh.from_scoping(
+            scoping=scoping_fea ,
+            nodes_only=False,
+            mesh=mesh
+        )
+        # Get scoped mesh
+        mesh = mesh_scoping.outputs.mesh()
     
     return scoping_twin_index, scoping_fea_index, mesh
 
@@ -244,12 +277,13 @@ def get_unit(input_data, config):
                             return unit_dict[operation]
     return None    
 
-def export_output_data_to_json(output_file, result_unit, twin_outputs=None, output_parameters=None):
+def export_output_data_to_json(output_file, result_unit, named_selection, twin_outputs=None, output_parameters=None):
     # Structure the data in a dictionary
     data = {
         "twin_outputs": twin_outputs,
         "output_parameters": output_parameters,
-        "unit": result_unit
+        "unit": result_unit,
+        "named_selection": named_selection
     }
     
     # Write the dictionary to a JSON file

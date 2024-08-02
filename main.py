@@ -14,6 +14,12 @@ def main():
     input_dir =  os.path.join(os.path.dirname(__file__), input_file_dir, 'input_data.json')
     input_data = utility.load_json(input_dir)
     
+    try:
+        utility.validate_parameters(input_data, config)
+    except ValueError as e:
+        print(e)
+        exit(1)  # Stop the script with a non-zero exit code
+    
     # Initiate twin from twin file
     print("++ Initializing the Twin")
     twin_file = utility.twin_file_handler(input_data, config) 
@@ -32,11 +38,21 @@ def main():
     
     # Obtain named selection scoping mesh 
     print("++ Obtaining named selections")
-    scoping = input_data['input_parameters']['named_selection']
+    
     named_selections_twin, named_selections_fea = utility.named_selections(twin_model, rom_name, mesh)
-    nstwin, nsfea, mesh = utility.scoping(named_selections_twin, named_selections_fea, mesh, scoping=scoping)
-    scoping_twin = named_selections_twin[nstwin]
-    scoping_fea = named_selections_fea[nsfea]
+    
+    named_selection = input_data['input_parameters']['named_selection']
+    if named_selection == "All_Body":
+        scoping = None
+        nstwin, nsfea, mesh = utility.scoping(named_selections_twin, named_selections_fea, mesh, scoping=scoping)
+        scoping_twin = None
+        scoping_fea = None
+    else: 
+        scoping = input_data['input_parameters']['named_selection']
+        nstwin, nsfea, mesh = utility.scoping(named_selections_twin, named_selections_fea, mesh, scoping=scoping)
+        scoping_twin = named_selections_twin[nstwin]
+        scoping_fea = named_selections_fea[nsfea]
+
     grid.points = utility.convert_to_meters(grid.points, mesh_unit)    
     result_unit = utility.get_unit(input_data, config)
     
@@ -78,10 +94,10 @@ def main():
     min_result = obtain_max_min.obtain_min(result_data)
     max_min_result = {f"max {result_detail}": max_result, f"min {result_detail}": min_result}
     
-    # Export to output_data.json
+    # Export to output_data.jsonW
     print("++ Exporting to output_data.json")
     output_data_path = os.path.join(os.path.dirname(__file__), input_data["output_files"]["output_dir"], input_data["output_files"]["data_file"]["output_data"])
-    output_path = utility.export_output_data_to_json(output_data_path, result_unit, twin_outputs=twin_outputs, output_parameters=max_min_result)
+    output_path = utility.export_output_data_to_json(output_data_path, result_unit, named_selection, twin_outputs=twin_outputs, output_parameters=max_min_result)
     print(f"DataFrames have been exported to {output_path}")
     
     # Export to result_field.json

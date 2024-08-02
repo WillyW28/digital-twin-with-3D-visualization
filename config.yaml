@@ -19,6 +19,7 @@ available_operations:
     - cycle
     - damage
 availabe_named_selections:
+  - All_Body
   - Frame
   - Weld
 available_deformation_scale:
@@ -34,7 +35,7 @@ operation_units:
   - fatigue:
     - cycle: cycles
     - damage: 
-available_roms: 1
+available_roms: [0]
 
 # Parameters
 inputs:
