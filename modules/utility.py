@@ -19,6 +19,8 @@ def load_json(json_path):
     with open(json_path, 'r') as file:
         return json.load(file)
 
+
+
 def twin_file_handler(input_data, config):
     # Implement logic to handle input file
     operation = input_data['input_parameters']['operation'][0]
@@ -221,15 +223,36 @@ def export_to_3d_file(inter_grid, output_dir, input_data):
         plotter.export_obj(f"{output_file}.obj")
     else:
         raise ValueError("Invalid output type. Please provide 'gltf', 'vrml', or 'obj'.") 
-    
-def export_output_data_to_json(output_file, twin_outputs=None, output_parameters=None):
+
+def get_unit(input_data, config):
+    operation_units = config["operation_units"]
+    operation, sub_operation =  input_data["input_parameters"]["operation"]
+
+    for op_dict in config['available_operations']:
+        if operation in op_dict:
+             # Check if the child operation exists within the parent operation
+            if sub_operation in op_dict[operation]:
+                # Find the corresponding unit
+                for unit_dict in config['operation_units']:
+                    if operation in unit_dict:
+                        # Handle special case for fatigue
+                        if operation == 'fatigue':
+                            for sub_unit_dict in unit_dict[operation]:
+                                if sub_operation in sub_unit_dict:
+                                    return sub_unit_dict[sub_operation]
+                        else:
+                            return unit_dict[operation]
+    return None    
+
+def export_output_data_to_json(output_file, result_unit, twin_outputs=None, output_parameters=None):
     # Structure the data in a dictionary
     data = {
         "twin_outputs": twin_outputs,
-        "output_parameters": output_parameters
+        "output_parameters": output_parameters,
+        "unit": result_unit
     }
     
     # Write the dictionary to a JSON file
     with open(output_file, "w") as f:
-        json.dump(data, f)
+        json.dump(data, f, indent=4)
     return output_file

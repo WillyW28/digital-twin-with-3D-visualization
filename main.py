@@ -38,6 +38,7 @@ def main():
     scoping_twin = named_selections_twin[nstwin]
     scoping_fea = named_selections_fea[nsfea]
     grid.points = utility.convert_to_meters(grid.points, mesh_unit)    
+    result_unit = utility.get_unit(input_data, config)
     
     # Deflect mesh from displacement result
     print("++ Deflecting mesh")
@@ -75,12 +76,12 @@ def main():
     print("++ Obtaining max and min value")
     max_result = obtain_max_min.obtain_max(result_data)
     min_result = obtain_max_min.obtain_min(result_data)
-    max_min_result = {"max": max_result, "min": min_result}
+    max_min_result = {f"max {result_detail}": max_result, f"min {result_detail}": min_result}
     
     # Export to output_data.json
     print("++ Exporting to output_data.json")
-    output_data_path = os.path.join(os.path.dirname(__file__), input_data["output_files"]["data_file"]["output_data"])
-    output_path = utility.export_output_data_to_json(output_data_path, twin_outputs=twin_outputs, output_parameters=max_min_result)
+    output_data_path = os.path.join(os.path.dirname(__file__), input_data["output_files"]["output_dir"], input_data["output_files"]["data_file"]["output_data"])
+    output_path = utility.export_output_data_to_json(output_data_path, result_unit, twin_outputs=twin_outputs, output_parameters=max_min_result)
     print(f"DataFrames have been exported to {output_path}")
     
     # Export to result_field.json

@@ -1,14 +1,7 @@
 # config.yaml
 
-# Directory paths
-input_dir: 'data/input/'
-output_dir: 'data/output/'
-twin_file: 'data/raw/twin_disp_file.twin'
-rst_file: 'data/raw/file.rst'
-twin_disp_file: 'data/raw/twin_disp_file.twin'
-
 # List of operations to perform
-available_operations:
+available_operations: 
   - displacement:
     - ux
     - uy
@@ -25,29 +18,31 @@ available_operations:
   - fatigue:
     - cycle
     - damage
-
-operation: 
-  - displacement
-  - norm
-
-# Other configuration settings (example)
-mesh_settings:
-  show_edges: True
-  format: 'gltf'
+availabe_named_selections:
+  - Frame
+  - Weld
+available_deformation_scale:
+  - Undeformed
+  - True Scale
+  - 0.5 Auto
+  - Auto Scale
+  - 2x Auto
+  - 5x Auto
+operation_units:
+  - displacement: mm
+  - stress: MPa
+  - fatigue:
+    - cycle: cycles
+    - damage: 
+available_roms: 1
 
 # Parameters
 inputs:
   - Force_Magnitude:
     - initial_value: 4000
     - unit: 'N'
-    - minimum_value: 0
-    - maximum_value: 10000
+    - minimum_value: 2900
+    - maximum_value: 5000
 outputs:
-initial_value:
-  - Force_Magnitude: 4000
-named_selections:
-  - Frame
-  - Weld
-scoping: frame
 autoscale: 200
 deflection: 1
