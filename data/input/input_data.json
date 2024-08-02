@@ -1,13 +1,13 @@
 {
     "twin_inputs": {
         "rom_inputs": {
-            "Force_Magnitude": 3000
+            "Force_Magnitude": 5000
         }
     },
     "input_parameters": {
         "rom_index" : 0,
         "named_selection": "All_Body",
-        "operation": ["stress", "xz"],
+        "operation": ["fatigue", "cycle"],
         "deformation_scale": "0.5 Auto"
     },
     "input_files": {

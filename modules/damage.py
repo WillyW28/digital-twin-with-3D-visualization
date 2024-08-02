@@ -27,9 +27,11 @@ def calculate_damage(stress_array, sn_curve_file_path):
     return damage
 
 def get_result(input_data, outfields, points, sn_curve_file_path):
-    # Get displacement result
+    # Get stress result
+    stress_data = stress.calculate_von_mises(outfields)
+    
+    print("stress_data: ", stress_data)
     loc_xyz = utility.unflatten_vector(points, 3)
-    stress_data = stress.get_result(outfields, points, "von_mises")
     base_data = {
             "x": loc_xyz[:, 0],
             "y": loc_xyz[:, 1],

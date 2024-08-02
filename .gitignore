@@ -1,0 +1,4 @@
+*.gltf
+*.wrl
+*.obj
+data/output/

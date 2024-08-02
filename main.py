@@ -14,6 +14,7 @@ def main():
     input_dir =  os.path.join(os.path.dirname(__file__), input_file_dir, 'input_data.json')
     input_data = utility.load_json(input_dir)
     
+    # Validate input parameters
     try:
         utility.validate_parameters(input_data, config)
     except ValueError as e:
@@ -76,8 +77,9 @@ def main():
     # Projection result on mesh
     print("++ Projecting result on mesh")
     result_detail = "_".join(input_data["input_parameters"]["operation"])
-    result_mesh = utility.project_result_on_mesh(result_data, grid, result_detail)
+    result_mesh, result_load_val = utility.project_result_on_mesh(result_data, grid, result_detail)
 
+    print(result_load_val)
     # Plot result
     print("++ Plotting result")
     show_edges = input_data["output_files"]["3d_file"]["show_edges"]
