@@ -100,7 +100,6 @@ def initiate_twin(input_data, twin_file):
     try:
         twin_model.initialize_evaluation(parameters=rom_parameters, inputs=rom_inputs, field_inputs=field_inputs, json_config_filepath=None)
         tbrom_names = twin_model.tbrom_names
-        print("-- Twin Initialization Successful")
     except Exception as e:
         twin_model = None
         tbrom_names = None

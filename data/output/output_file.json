@@ -6,21 +6,21 @@
         "outField_mode_4": 0.003368772639930021
     },
     "output_parameters": {
-        "max displacement_norm": {
+        "max displacement_uz": {
             "points": [
                 0.5000000000000002,
-                0.013,
-                0.0
-            ],
-            "result": 9.045538876395401
-        },
-        "min displacement_norm": {
-            "points": [
-                0.0,
                 -0.015,
-                -0.013500000000000009
+                -0.022500000000000003
             ],
-            "result": 0.0
+            "result": 0.007902752702889142
+        },
+        "min displacement_uz": {
+            "points": [
+                0.5000000000000002,
+                -0.015,
+                0.022500000000000003
+            ],
+            "result": -0.007884404206084189
         }
     },
     "unit": "mm",
