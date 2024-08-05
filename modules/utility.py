@@ -176,7 +176,7 @@ def scoping(named_selections_twin, named_selections_fea, mesh, scoping=None):
     
     return scoping_twin_index, scoping_fea_index, mesh
 
-def deflection_scale(percent_def, points, outfield):
+def deflection_scale(config, points, outfield):
     # Calculates the longest distance between any two points in a given array
     distances = cdist(points, points)
     max_distance = np.max(distances)
@@ -185,9 +185,10 @@ def deflection_scale(percent_def, points, outfield):
     magnitudes = np.linalg.norm(outfield, axis=1)
     max_magnitude = np.max(magnitudes)
 
+    # Calculate scale factor
+    percent_def = config["autoscale"]
     scale_factor = (percent_def/100)*(max_distance/max_magnitude)
     return scale_factor
-    pass
 
 def deflect_mesh(mesh, twin_file, rom_index, scoping_twin, percent_def, rom_parameters=None, rom_inputs=None, field_inputs=None, json_config=None):
     twin_model, tbrom_names = initiate_twin(twin_file, rom_parameters=None, rom_inputs=None, field_inputs=None, json_config=None)

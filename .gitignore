@@ -2,3 +2,5 @@
 *.wrl
 *.obj
 data/output/
+output_file.json
+*_field_data.json

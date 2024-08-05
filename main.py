@@ -57,10 +57,6 @@ def main():
     grid.points = utility.convert_to_meters(grid.points, mesh_unit)    
     result_unit = utility.get_unit(input_data, config)
     
-    # Deflect mesh from displacement result
-    print("++ Deflecting mesh")
-    pass
-    
     # Perform operations based on config
     operation, result_type = input_data["input_parameters"]["operation"]
     outfields, points = utility.get_result(twin_model, rom_name, scoping_twin=scoping_twin)
@@ -79,7 +75,11 @@ def main():
     result_detail = "_".join(input_data["input_parameters"]["operation"])
     result_mesh, result_load_val = utility.project_result_on_mesh(result_data, grid, result_detail)
 
-    print(result_load_val)
+    # Deflect mesh from displacement result
+    print("++ Deflecting mesh")
+    scale_factor = utility.deflection_scale(config, points, outfields)
+    print("scale_factor: ", scale_factor)
+
     # Plot result
     print("++ Plotting result")
     show_edges = input_data["output_files"]["3d_file"]["show_edges"]

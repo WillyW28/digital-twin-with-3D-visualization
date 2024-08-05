@@ -45,5 +45,5 @@ inputs:
     - minimum_value: 2900
     - maximum_value: 5000
 outputs:
-autoscale: 200
+autoscale: 20
 deflection: 1
