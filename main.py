@@ -78,13 +78,7 @@ def main():
     # Deflect mesh from displacement result
     print("++ Deflecting mesh")
     main_dir = os.path.dirname(__file__)
-    def_result_load_val = deflect_mesh.get_disp_result(input_data, main_dir)
-    result_mesh, scale_factor, max_distance, max_magnitude, filtered = deflect_mesh.get_deflected_mesh(result_mesh, config, input_data, def_result_load_val)
-    print("def_result_load_val: ", def_result_load_val)
-    print("filtered: ", filtered)
-    print("scale_factor: ", scale_factor)
-    print("max_distance: ", max_distance)
-    print("max_magnitude: ", max_magnitude)    
+    result_mesh = utility.deflection_handler(input_data, config, main_dir, result_mesh)
     
     # Plot result
     print("++ Plotting result")

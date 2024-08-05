@@ -67,7 +67,7 @@ def get_disp_result(input_data, main_dir):
     # Projection result on mesh
     result_detail = "_".join(input_data["input_parameters"]["operation"])
     result_mesh, result_load_val = project_result_on_mesh(outfields, points, grid)
-    return result_load_val
+    return result_load_val, result_mesh
 
 def deflection_scale(config, input_data, points, result_field):
     # Calculates the longest distance between any two points in a given array
@@ -90,9 +90,10 @@ def deflection_scale(config, input_data, points, result_field):
     # Calculate scale factor
     percent_def = config["autoscale"]
     scale_factor = (percent_def/100)*(max_distance/max_magnitude)
-    return scale_factor, max_distance, max_magnitude
+    return scale_factor
 
-def get_deflected_mesh(mesh, config, input_data, outfields):
+def get_deflected_mesh(mesh, config, input_data, outfields, scale_parameter, scale_factor_ow):
+    # Filter outfields
     filtered = np.zeros_like(outfields)
     result_type = input_data["input_parameters"]["operation"][1]
     if result_type == "ux":
@@ -105,9 +106,13 @@ def get_deflected_mesh(mesh, config, input_data, outfields):
         filtered = outfields
 
     # Deflect mesh from displacement result
-    scale_factor, max_distance, max_magnitude = deflection_scale(config, input_data, mesh.points, filtered)
-    outfields = utility.convert_to_meters(outfields, config["operation_units"]["displacement"])
-    scaled_disp = outfields * scale_factor
+    
+    if scale_factor_ow == True:
+        scale_factor = 1
+    else: 
+        scale_factor = deflection_scale(config, input_data, mesh.points, filtered) * scale_parameter
+    filtered = utility.convert_to_meters(filtered, config["operation_units"]["displacement"])
+    scaled_disp = filtered * scale_factor
     mesh.points = mesh.points + scaled_disp
     
-    return mesh, scale_factor, max_distance, max_magnitude, filtered
+    return mesh

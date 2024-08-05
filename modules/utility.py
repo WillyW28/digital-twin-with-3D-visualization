@@ -5,6 +5,7 @@ import yaml
 import os
 import numpy as np
 import json
+from . import deflect_mesh
 
 
 # from pydpf import Model  # Example import, adjust as needed for PyDPF/PyTwin
@@ -48,7 +49,7 @@ def validate_parameters(json_data, yaml_config):
     
     # Validate 'deformation_scale'
     deformation_scale = input_params['deformation_scale']
-    if deformation_scale not in yaml_config['available_deformation_scale']:
+    if deformation_scale not in yaml_config['available_deformation_scales']:
         raise ValueError(f"Error: Deformation scale '{deformation_scale}' is not valid. Available deformation scale: {yaml_config['available_deformation_scale']}")
     
     print("-- All input parameters are valid.")
@@ -202,6 +203,31 @@ def project_result_on_mesh(result, grid, result_type):
         pv.convert_array(inter_grid.active_scalars)
     )  # Save result interpolated to each node as a NumPy array
     return inter_grid, result_load_val
+
+def deflection_handler(input_data, config, main_dir, result_mesh):
+    deformation_scale = input_data["input_parameters"]["deformation_scale"]
+    if deformation_scale  == "Undeformed":
+        pass
+    elif deformation_scale in config["available_deformation_scales"]:
+        scale_parameter = 0
+        scale_factor_ow = False
+        def_result_load_val, disp_mesh = deflect_mesh.get_disp_result(input_data, main_dir)
+        if deformation_scale == "True Scale":
+            scale_factor_ow = True
+        elif deformation_scale == "0.5 Auto":
+            scale_parameter = 0.5
+        elif deformation_scale == "Auto Scale":
+            scale_parameter = 1
+        elif deformation_scale == "2x Auto":
+            scale_parameter = 2
+        elif deformation_scale == "5x Auto":
+            scale_parameter = 5
+        result_mesh = deflect_mesh.get_deflected_mesh(result_mesh, config, input_data, def_result_load_val, scale_parameter, scale_factor_ow)
+    else:
+        raise ValueError(f"Invalid deformation scale: {input_data['input_parameters']['deformation_scale']}. Avalailable deformation scales: {config['available_deformation_scales']}")
+
+    return result_mesh
+
 
 def plot_result (inter_grid, show_edges=True):
     inter_grid.plot(show_edges=show_edges)  # Plot the interpolated data on MAPDL grid

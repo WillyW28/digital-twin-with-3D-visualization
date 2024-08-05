@@ -1,28 +1,29 @@
 {
     "twin_outputs": {
-        "outField_mode_1": 1275.0400603130554,
-        "outField_mode_2": 3.081889052361495,
-        "outField_mode_3": -0.004510335113495006,
-        "outField_mode_4": 0.003368772639930021
+        "outField_mode_1": 29048.453965044027,
+        "outField_mode_2": 602.6192793105565,
+        "outField_mode_3": -14.624471346742226,
+        "outField_mode_4": 0.6819864412359005,
+        "outField_mode_5": -0.475466500941399
     },
     "output_parameters": {
-        "max displacement_uz": {
+        "max stress_von_mises": {
             "points": [
                 0.5000000000000002,
-                -0.015,
+                0.014999999999999996,
                 -0.022500000000000003
             ],
-            "result": 0.007902752702889142
+            "result": 226.2614177581917
         },
-        "min displacement_uz": {
+        "min stress_von_mises": {
             "points": [
-                0.5000000000000002,
-                -0.015,
-                0.022500000000000003
+                0.5,
+                -4.336808689942018e-19,
+                0.020000000000000004
             ],
-            "result": -0.007884404206084189
+            "result": 3.7019840133060224
         }
     },
-    "unit": "mm",
+    "unit": "MPa",
     "named_selection": "All_Body"
 }

@@ -22,7 +22,7 @@ availabe_named_selections:
   - All_Body
   - Frame
   - Weld
-available_deformation_scale:
+available_deformation_scales:
   - Undeformed
   - True Scale
   - 0.5 Auto
