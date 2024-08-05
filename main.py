@@ -1,5 +1,5 @@
 import os
-from modules import utility, displacement, stress, damage
+from modules import utility, displacement, stress, damage, deflect_mesh
 from scripts import obtain_max_min
 
 def main():
@@ -24,7 +24,7 @@ def main():
     # Initiate twin from twin file
     print("++ Initializing the Twin")
     twin_file = utility.twin_file_handler(input_data, config) 
-    twin_file_dir = config_dir =  os.path.join(os.path.dirname(__file__), twin_file)
+    twin_file_dir = os.path.join(os.path.dirname(__file__), twin_file)
     twin_model, tbrom_names = utility.initiate_twin(input_data, twin_file_dir)
     rom_index = input_data['input_parameters']['rom_index']
     rom_name = tbrom_names[rom_index]
@@ -75,11 +75,16 @@ def main():
     result_detail = "_".join(input_data["input_parameters"]["operation"])
     result_mesh, result_load_val = utility.project_result_on_mesh(result_data, grid, result_detail)
 
+
     # Deflect mesh from displacement result
     print("++ Deflecting mesh")
-    scale_factor = utility.deflection_scale(config, points, outfields)
-    print("scale_factor: ", scale_factor)
-
+    main_dir = os.path.dirname(__file__)
+    def_result_load_val = deflect_mesh.get_disp_result(input_data, main_dir)
+    max_distance, max_magnitude, scale_factor = deflect_mesh.deflection_scale(config, result_mesh.points, def_result_load_val)
+    print(" scale factor: ", scale_factor)
+    print(" max distance: ", max_distance)
+    print(" max magnitude: ", max_magnitude)
+    
     # Plot result
     print("++ Plotting result")
     show_edges = input_data["output_files"]["3d_file"]["show_edges"]

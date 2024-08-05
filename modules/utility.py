@@ -5,7 +5,7 @@ import yaml
 import os
 import numpy as np
 import json
-from scipy.spatial.distance import cdist
+
 
 # from pydpf import Model  # Example import, adjust as needed for PyDPF/PyTwin
 
@@ -176,35 +176,6 @@ def scoping(named_selections_twin, named_selections_fea, mesh, scoping=None):
     
     return scoping_twin_index, scoping_fea_index, mesh
 
-def deflection_scale(config, points, outfield):
-    # Calculates the longest distance between any two points in a given array
-    distances = cdist(points, points)
-    max_distance = np.max(distances)
-
-    # Find highes displacement
-    magnitudes = np.linalg.norm(outfield, axis=1)
-    max_magnitude = np.max(magnitudes)
-
-    # Calculate scale factor
-    percent_def = config["autoscale"]
-    scale_factor = (percent_def/100)*(max_distance/max_magnitude)
-    return scale_factor
-
-def deflect_mesh(mesh, twin_file, rom_index, scoping_twin, percent_def, rom_parameters=None, rom_inputs=None, field_inputs=None, json_config=None):
-    twin_model, tbrom_names = initiate_twin(twin_file, rom_parameters=None, rom_inputs=None, field_inputs=None, json_config=None)
-    rom_name = tbrom_names[rom_index]
-
-    outfield = twin_model.generate_snapshot(rom_name, on_disk=False, named_selection=scoping_twin)
-    points = twin_model.generate_points(rom_name, on_disk=False, named_selection=scoping_twin)
-
-    scale_factor = deflection_scale(percent_def, points, outfield)
-
-    scaled_disp = outfield * 10
-    mesh.grid.points = mesh.grid.points + scaled_disp*10
-    
-    return mesh
-    pass
-
 def get_result(twin_model, rom_name, scoping_twin=None):
     # Get result data and point coordinates
     outfield = twin_model.generate_snapshot(rom_name, on_disk=False, named_selection=scoping_twin)
@@ -261,21 +232,16 @@ def get_unit(input_data, config):
     operation_units = config["operation_units"]
     operation, sub_operation =  input_data["input_parameters"]["operation"]
 
-    for op_dict in config['available_operations']:
-        if operation in op_dict:
-             # Check if the child operation exists within the parent operation
-            if sub_operation in op_dict[operation]:
-                # Find the corresponding unit
-                for unit_dict in config['operation_units']:
-                    if operation in unit_dict:
-                        # Handle special case for fatigue
-                        if operation == 'fatigue':
-                            for sub_unit_dict in unit_dict[operation]:
-                                if sub_operation in sub_unit_dict:
-                                    return sub_unit_dict[sub_operation]
-                        else:
-                            return unit_dict[operation]
-    return None    
+    # Check if the operation exists in the config
+    if operation in operation_units:
+        # Handle special case for fatigue
+        if operation == 'fatigue':
+            if sub_operation in operation_units[operation]:
+                return operation_units[operation][sub_operation]
+        else:
+            return operation_units[operation]
+    
+    return None
 
 def export_output_data_to_json(output_file, result_unit, named_selection, twin_outputs=None, output_parameters=None):
     # Structure the data in a dictionary

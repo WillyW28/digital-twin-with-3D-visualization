@@ -30,11 +30,11 @@ available_deformation_scale:
   - 2x Auto
   - 5x Auto
 operation_units:
-  - displacement: mm
-  - stress: MPa
-  - fatigue:
-    - cycle: cycles
-    - damage: 
+  displacement: mm
+  stress: MPa
+  fatigue:
+    cycle: cycles
+    damage: 
 available_roms: [0]
 
 # Parameters
@@ -45,5 +45,4 @@ inputs:
     - minimum_value: 2900
     - maximum_value: 5000
 outputs:
-autoscale: 20
-deflection: 1
+autoscale: 8.5
