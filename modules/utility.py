@@ -23,6 +23,7 @@ def load_json(json_path):
 def validate_parameters(json_data, yaml_config):
     input_params = json_data['input_parameters']
     
+    # Validate 'rom_index'
     rom_index = input_params['rom_index']
     if rom_index not in yaml_config['available_roms']:
         raise ValueError(f"Error: ROM index '{rom_index}' is not valid. Available ROMs: {yaml_config['available_roms']}")
@@ -39,10 +40,9 @@ def validate_parameters(json_data, yaml_config):
     
     parent_operation, child_operation = operation
     valid_operation = False
-    for op_dict in yaml_config['available_operations']:
-        if parent_operation in op_dict and child_operation in op_dict[parent_operation]:
+    if parent_operation in yaml_config['available_operations']:
+        if child_operation in yaml_config['available_operations'][parent_operation]:
             valid_operation = True
-            break
     
     if not valid_operation:
         raise ValueError(f"Error: Operation '{parent_operation}_{child_operation}' is not valid. Available operations: {yaml_config['available_operations']}")
@@ -60,9 +60,7 @@ def twin_file_handler(input_data, config):
     operation = input_data['input_parameters']['operation'][0]
     
     # Extract the keys from available_operations
-    available_operations = []
-    for item in config['available_operations']:
-        available_operations.extend(list(item.keys()))
+    available_operations = list(config['available_operations'].keys())
         
     # Determine the correct twin file key based on the operation
     twin_file_key = 'stress' if operation == 'fatigue' else operation

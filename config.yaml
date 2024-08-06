@@ -2,33 +2,33 @@
 
 # List of operations to perform
 available_operations: 
-  - displacement:
-    - ux
-    - uy
-    - uz
-    - norm
-  - stress:
-    - von_mises
-    - xx
-    - yy
-    - zz
-    - xy
-    - yz
-    - xz
-  - fatigue:
-    - cycle
-    - damage
+  displacement:
+    ux
+    uy
+    uz
+    norm
+  stress:
+    von_mises
+    xx
+    yy
+    zz
+    xy
+    yz
+    xz
+  fatigue:
+    cycle
+    damage
 availabe_named_selections:
-  - All_Body
-  - Frame
-  - Weld
+  All_Body
+  Frame
+  Weld
 available_deformation_scales:
-  - Undeformed
-  - True Scale
-  - 0.5 Auto
-  - Auto Scale
-  - 2x Auto
-  - 5x Auto
+  Undeformed
+  True Scale
+  0.5 Auto
+  Auto Scale
+  2x Auto
+  5x Auto
 operation_units:
   displacement: mm
   stress: MPa
@@ -39,10 +39,10 @@ available_roms: [0]
 
 # Parameters
 inputs:
-  - Force_Magnitude:
-    - initial_value: 4000
-    - unit: 'N'
-    - minimum_value: 2900
-    - maximum_value: 5000
+   Force_Magnitude:
+    initial_value: 3000
+    unit: 'N'
+    minimum_value: 2900
+    maximum_value: 5000
 outputs:
 autoscale: 8.5
