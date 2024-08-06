@@ -1,5 +1,5 @@
 import os
-from modules import utility, displacement, stress, damage, deflect_mesh
+from modules import utility, displacement, stress, damage
 from scripts import obtain_max_min
 
 def main():
