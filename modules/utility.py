@@ -7,9 +7,6 @@ import numpy as np
 import json
 from . import deflect_mesh
 
-
-# from pydpf import Model  # Example import, adjust as needed for PyDPF/PyTwin
-
 def load_config(config_path):
     # Load the configuration file
     with open(config_path, 'r') as file:

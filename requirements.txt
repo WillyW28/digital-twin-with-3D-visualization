@@ -19,5 +19,10 @@ pyyaml==5.4.1
 # JSON handling (usually comes with the standard library, but specifying if needed)
 simplejson==3.17.2
 
+# API environtment
+fastapi
+uvicorn
+
 # Other utilities
 requests==2.25.1
+
