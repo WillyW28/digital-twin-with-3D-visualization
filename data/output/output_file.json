@@ -1,28 +1,29 @@
 {
     "twin_outputs": {
-        "outField_mode_1": 1275.0400603130554,
-        "outField_mode_2": 3.081889052361495,
-        "outField_mode_3": -0.004510335113495006,
-        "outField_mode_4": 0.003368772639930021
+        "outField_mode_1": 29048.453965044027,
+        "outField_mode_2": 602.6192793105565,
+        "outField_mode_3": -14.624471346742226,
+        "outField_mode_4": 0.6819864412359005,
+        "outField_mode_5": -0.475466500941399
     },
     "output_parameters": {
-        "max displacement_norm": {
+        "max fatigue_cycle": {
+            "points": [
+                0.5,
+                -4.336808689942018e-19,
+                0.020000000000000004
+            ],
+            "result": 74333537282717.11
+        },
+        "min fatigue_cycle": {
             "points": [
                 0.5000000000000002,
-                0.013,
-                0.0
+                0.014999999999999996,
+                -0.022500000000000003
             ],
-            "result": 9.045538876395401
-        },
-        "min displacement_norm": {
-            "points": [
-                0.0,
-                -0.015,
-                -0.013500000000000009
-            ],
-            "result": 0.0
+            "result": 16525.400562699673
         }
     },
-    "unit": "mm",
+    "unit": "cycles",
     "named_selection": "All_Body"
 }

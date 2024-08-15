@@ -26,7 +26,6 @@ def main():
     print("++ Initializing the Twin")
     twin_file, tbrom_name = utility.twin_file_handler(input_data, config, file_dir) 
     twin_file_dir = os.path.join(file_dir, twin_file)
-    print(twin_file_dir)
     twin_model, tbroms = utility.initiate_twin(input_data, twin_file_dir)
     rom_name = tbrom_name
     twin_outputs = twin_model.outputs
@@ -36,7 +35,6 @@ def main():
     rst_file = input_data['input_files']['rst_file']
     rst_file_dir =  os.path.join(os.path.dirname(__file__), rst_file)
     mesh, grid, mesh_unit = utility.extract_mesh(rst_file_dir)
-
     
     # Obtain named selection scoping mesh 
     print("++ Obtaining named selections")
@@ -57,6 +55,7 @@ def main():
 
     grid.points = utility.convert_to_meters(grid.points, mesh_unit)    
     result_unit = utility.get_unit(input_data, config)
+    print("result_unit",result_unit)
     
     # Perform operations based on config
     operation, result_type = input_data["input_parameters"]["operation"]
@@ -111,7 +110,7 @@ def main():
    
     # Export DataFrame to JSON
     result_data.to_json(result_field_path, orient='records', lines=True)
-    # print(f"DataFrames have been exported to {result_field_path}")
+    print(f"DataFrames have been exported to {result_field_path}")
     
 if __name__ == "__main__":
     main()

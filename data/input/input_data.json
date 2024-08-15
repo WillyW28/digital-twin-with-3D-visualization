@@ -7,7 +7,7 @@
     "input_parameters": {
         "rom_index" : 0,
         "named_selection": "All_Body",
-        "operation": ["displacement", "norm"],
+        "operation": ["fatigue", "cycle"],
         "deformation_scale": "True Scale"
     },
     "input_files": {

@@ -3,3 +3,4 @@
 *.obj
 output_file.json
 *field_data.json
+output/*

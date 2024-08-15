@@ -23,14 +23,9 @@ def load_json(json_path):
 def validate_parameters(json_data, yaml_config):
     input_params = json_data['input_parameters']
     
-    # Validate 'rom_index'
-    rom_index = input_params['rom_index']
-    if rom_index not in yaml_config['available_roms']:
-        raise ValueError(f"Error: ROM index '{rom_index}' is not valid. Available ROMs: {yaml_config['available_roms']}")
-    
     # Validate 'named_selection'
     named_selection = input_params['named_selection']
-    if named_selection not in yaml_config['availabe_named_selections']:
+    if named_selection not in yaml_config['available_named_selections']:
         raise ValueError(f"Error: Named selection '{named_selection}' is not valid. Available named selections: {yaml_config['availabe_named_selections']}")
     
     # Validate 'operation'
@@ -242,17 +237,21 @@ def export_to_3d_file(inter_grid, output_dir, input_data):
         raise ValueError("Invalid output type. Please provide 'gltf', 'vrml', or 'obj'.") 
 
 def get_unit(input_data, config):
-    operation_units = config["operation_units"]
-    operation, sub_operation =  input_data["input_parameters"]["operation"]
-
+    available_operations = config["available_operations"]
+    operation, sub_operation = input_data["input_parameters"]["operation"]    
+    
     # Check if the operation exists in the config
-    if operation in operation_units:
-        # Handle special case for fatigue
-        if operation == 'fatigue':
-            if sub_operation in operation_units[operation]:
-                return operation_units[operation][sub_operation]
-        else:
-            return operation_units[operation]
+    if operation in available_operations:
+        operation_data = available_operations[operation]
+        
+        # If the operation is derived, return the unit for the specific sub_operation
+        if operation_data.get("derived"):
+            if sub_operation in operation_data["suboperations"]:
+                sub_index = operation_data["suboperations"].index(sub_operation)
+                return operation_data["suboperations_units"][sub_index]
+        
+        # For base operations, return the main tbrom unit
+        return operation_data["tbrom_units"]
     
     return None
 

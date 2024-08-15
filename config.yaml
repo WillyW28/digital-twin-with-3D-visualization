@@ -1,7 +1,7 @@
 # config.yaml
 
-# Digital Twin Project 
-Model: 
+# Digital Twin Model Description
+model: 
   name: Simply Supported Beam
   type: Physical Based
   domain: Structural
@@ -11,16 +11,19 @@ Model:
 available_operations: 
   displacement:
     tbrom: SSB_6_Def1
-    units: mm
+    tbrom_units: mm
     suboperations: [ux, uy, uz, norm]    
+    suboperations_units: mm
   stress:
     tbrom: SSB_6_Str1
-    units: MPa
+    tbrom_units: MPa
     suboperations: [von_mises, xx, yy, zz, xy, yz, xz]
+    suboperations_units: MPa
   fatigue:
     tbrom: SSB_6_Str1
-    units: MPa
+    tbrom_units: MPa
     suboperations: [cycle, damage]
+    suboperations_units: [cycles, None]
     derived: True
     script: fatigue.py
 
@@ -29,24 +32,21 @@ twin_files:
   - data/raw/twin_file_dsp.twin
   - data/raw/twin_file_str.twin
 
-availabe_named_selections:
-  All_Body
-  Frame
-  Weld
+available_named_selections:
+  - All_Body
+  - Frame
+  - Weld
 available_deformation_scales:
-  Undeformed
-  True Scale
-  0.5 Auto
-  Auto Scale
-  2x Auto
-  5x Auto
-operation_units:
-  displacement: mm
-  stress: MPa
-  fatigue:
-    cycle: cycles
-    damage: 
-available_roms: [0]
+  - Undeformed
+  - True Scale
+  - 0.5 Auto
+  - Auto Scale
+  - 2x Auto
+  - 5x Auto
+available_output_formats:
+  - gltf
+  - vrml
+  - obj
 
 # Parameters
 inputs:
