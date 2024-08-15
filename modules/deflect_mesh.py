@@ -48,7 +48,7 @@ def get_disp_result(input_data, main_dir):
     named_selections_twin, named_selections_fea = utility.named_selections(twin_model, rom_name, mesh)
     
     named_selection = input_data['input_parameters']['named_selection']
-    if named_selection == "All_Body":
+    if named_selection == "All Body":
         scoping = None
         nstwin, nsfea, mesh = utility.scoping(named_selections_twin, named_selections_fea, mesh, scoping=scoping)
         scoping_twin = None
@@ -111,7 +111,7 @@ def get_deflected_mesh(mesh, config, input_data, outfields, scale_parameter, sca
         scale_factor = 1
     else: 
         scale_factor = deflection_scale(config, input_data, mesh.points, filtered) * scale_parameter
-    filtered = utility.convert_to_meters(filtered, config["operation_units"]["displacement"])
+    filtered = utility.convert_to_meters(filtered, config["available_operations"]["displacement"]["tbrom_units"])
     scaled_disp = filtered * scale_factor
     mesh.points = mesh.points + scaled_disp
     

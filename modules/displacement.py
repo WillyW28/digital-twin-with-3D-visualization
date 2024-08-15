@@ -2,7 +2,7 @@ from . import utility
 import numpy as np
 import pandas as pd
 
-def get_result(input_data, outfield, points):
+def get_result(config, input_data, outfield, points):
     # Get displacement result
     results = utility.unflatten_vector(outfield, 3)
     loc_xyz = utility.unflatten_vector(points, 3)

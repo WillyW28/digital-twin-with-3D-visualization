@@ -5,6 +5,7 @@ import yaml
 import os
 import numpy as np
 import json
+import importlib
 from . import deflect_mesh
 
 
@@ -47,7 +48,7 @@ def validate_parameters(json_data, yaml_config):
     if deformation_scale not in yaml_config['available_deformation_scales']:
         raise ValueError(f"Error: Deformation scale '{deformation_scale}' is not valid. Available deformation scale: {yaml_config['available_deformation_scale']}")
     
-    print("-- All input parameters are valid.")
+    print("All input parameters are valid.")
     return True
 
 def twin_file_handler(input_data, config, file_dir):
@@ -254,6 +255,35 @@ def get_unit(input_data, config):
         return operation_data["tbrom_units"]
     
     return None
+
+def run_script(input_data, config, result_data):
+    # Store results for all scripts and their methods
+    script_results = {}
+
+    # Iterate over the scripts listed in input_data
+    for script_key in input_data["output_files"]["scripts"]:
+        # Get the script name from the config using the script key
+        script_config = config["scripts"].get(script_key)
+        if not script_config:
+            raise ValueError(f"Script {script_key} is not available in the config.")
+        
+        script_name = script_config["name"]
+        
+        # Dynamically import the script module
+        script_module = importlib.import_module(f"scripts.{script_name}")
+        
+        # Collect results for all methods in this script
+        method_results = {}
+        for method_name in script_config["methods"]:
+            # Dynamically get the method from the script module
+            method = getattr(script_module, method_name)
+            # Execute the method and store the result (if the method takes arguments, you may need to pass them)
+            method_results[method_name] = method(result_data)  # Adjust if you need to pass arguments
+        
+        # Store the method results for the script
+        script_results[script_name] = method_results
+    
+    return script_results
 
 def export_output_data_to_json(output_file, result_unit, named_selection, twin_outputs=None, output_parameters=None):
     # Structure the data in a dictionary

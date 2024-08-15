@@ -6,8 +6,8 @@
     },
     "input_parameters": {
         "rom_index" : 0,
-        "named_selection": "All_Body",
-        "operation": ["fatigue", "cycle"],
+        "named_selection": "All Body",
+        "operation": ["displacement", "norm"],
         "deformation_scale": "True Scale"
     },
     "input_files": {
@@ -19,6 +19,7 @@
         "sn_curve_file": "data/raw/sn_curve.csv"
     },
     "output_files": {
+        "scripts": ["obtain_max_min"],
         "output_dir": "data/output/",
         "data_file": {
             "output_data": "output_file.json",

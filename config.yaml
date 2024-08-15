@@ -14,26 +14,45 @@ available_operations:
     tbrom_units: mm
     suboperations: [ux, uy, uz, norm]    
     suboperations_units: mm
+    module: displacement
+    method: get_result
   stress:
     tbrom: SSB_6_Str1
     tbrom_units: MPa
     suboperations: [von_mises, xx, yy, zz, xy, yz, xz]
     suboperations_units: MPa
+    module: stress
+    method: get_result
   fatigue:
     tbrom: SSB_6_Str1
     tbrom_units: MPa
     suboperations: [cycle, damage]
     suboperations_units: [cycles, None]
     derived: True
-    script: fatigue.py
+    module: damage
+    method: get_result
+
+# List of Scripts
+scripts:
+  obtain_max_min: 
+    name: obtain_max_min
+    methods: [obtain_max, obtain_min]
 
 # Twin files
 twin_files:
   - data/raw/twin_file_dsp.twin
   - data/raw/twin_file_str.twin
 
+# Rst file
+rst_file: data/raw/file.rst
+
+# Additional data
+additional_files:
+  sn_curve_file: data/raw/sn_curve.csv
+
+# List of available parameters
 available_named_selections:
-  - All_Body
+  - All Body
   - Frame
   - Weld
 available_deformation_scales:
@@ -48,7 +67,7 @@ available_output_formats:
   - vrml
   - obj
 
-# Parameters
+# I/O parameters details
 inputs:
    Force_Magnitude:
     initial_value: 3000
@@ -56,4 +75,6 @@ inputs:
     minimum_value: 2900
     maximum_value: 5000
 outputs:
+
+# Autoscale deflection parameter in %
 autoscale: 8.5

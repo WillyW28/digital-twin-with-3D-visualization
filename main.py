@@ -1,6 +1,6 @@
 import os
-from modules import utility, displacement, stress, damage
-from scripts import obtain_max_min
+import importlib
+from modules import utility
 
 def main():
     # Load configuration
@@ -42,7 +42,7 @@ def main():
     named_selections_twin, named_selections_fea = utility.named_selections(twin_model, rom_name, mesh)
     
     named_selection = input_data['input_parameters']['named_selection']
-    if named_selection == "All_Body":
+    if named_selection == "All Body":
         scoping = None
         nstwin, nsfea, mesh = utility.scoping(named_selections_twin, named_selections_fea, mesh, scoping=scoping)
         scoping_twin = None
@@ -55,20 +55,24 @@ def main():
 
     grid.points = utility.convert_to_meters(grid.points, mesh_unit)    
     result_unit = utility.get_unit(input_data, config)
-    print("result_unit",result_unit)
     
     # Perform operations based on config
     operation, result_type = input_data["input_parameters"]["operation"]
     outfields, points = utility.get_result(twin_model, rom_name, scoping_twin=scoping_twin)
-    if operation == 'displacement':
-        result_data = displacement.get_result(input_data, outfields, points)
-    elif operation == 'stress':
-        result_data = stress.get_result(input_data, outfields, points)
-    elif operation == 'fatigue':
-        sn_curve_file_path = input_data['input_files']['sn_curve_file']
-        result_data = damage.get_result(input_data, outfields, points, sn_curve_file_path)
-    else:
-        raise ValueError(f"Invalid operation: {operation}")
+    
+    operation_config = config["available_operations"].get(operation)
+    if not operation_config:
+        raise ValueError(f"Operation {operation} is not available in the config.")
+    
+    module_name = operation_config["module"]
+    module_method = operation_config["method"]
+    
+    # Dynamically import the module based on operation
+    module = importlib.import_module(f"modules.{module_name}")
+    
+    # Get the result based on operation
+    get_result = getattr(module, module_method)
+    result_data = get_result(config, input_data, outfields, points)
     
     # Projection result on mesh
     print("++ Projecting result on mesh")
@@ -92,14 +96,12 @@ def main():
 
     # Obtaining max and min value
     print("++ Obtaining max and min value")
-    max_result = obtain_max_min.obtain_max(result_data)
-    min_result = obtain_max_min.obtain_min(result_data)
-    max_min_result = {f"max {result_detail}": max_result, f"min {result_detail}": min_result}
+    script_results = utility.run_script(input_data, config, result_data) 
     
     # Export to output_data.jsonW
     print("++ Exporting to output_data.json")
     output_data_path = os.path.join(os.path.dirname(__file__), input_data["output_files"]["output_dir"], input_data["output_files"]["data_file"]["output_data"])
-    output_path = utility.export_output_data_to_json(output_data_path, result_unit, named_selection, twin_outputs=twin_outputs, output_parameters=max_min_result)
+    output_path = utility.export_output_data_to_json(output_data_path, result_unit, named_selection, twin_outputs=twin_outputs, output_parameters=script_results)
     print(f"DataFrames have been exported to {output_path}")
     
     # Export to result_field.json

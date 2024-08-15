@@ -22,7 +22,7 @@ def calculate_von_mises(stress_array):
     
     return np.array(von_mises_stresses)
     
-def get_result(input_data, outfield, points):
+def get_result(config, input_data, outfield, points):
     # Get displacement result
     results = utility.unflatten_vector(outfield, 6)
     loc_xyz = utility.unflatten_vector(points, 3)
