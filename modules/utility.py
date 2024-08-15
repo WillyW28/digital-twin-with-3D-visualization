@@ -41,7 +41,7 @@ def validate_parameters(json_data, yaml_config):
     parent_operation, child_operation = operation
     valid_operation = False
     if parent_operation in yaml_config['available_operations']:
-        if child_operation in yaml_config['available_operations'][parent_operation]:
+        if child_operation in yaml_config['available_operations'][parent_operation]['suboperations']:
             valid_operation = True
     
     if not valid_operation:
@@ -55,54 +55,44 @@ def validate_parameters(json_data, yaml_config):
     print("-- All input parameters are valid.")
     return True
 
-def twin_file_handler(input_data, config):
+def twin_file_handler(input_data, config, file_dir):
     # Implement logic to handle input file
     operation = input_data['input_parameters']['operation'][0]
+    twin_file = None
+    tbrom_name = None
     
-    # Extract the keys from available_operations
-    available_operations = list(config['available_operations'].keys())
+    for twin in config['twin_files']:
+        twin_dir = os.path.join(file_dir, twin)
+        twin_model = TwinModel(twin_dir)
+        tbrom_names = twin_model.tbrom_names
         
-    # Determine the correct twin file key based on the operation
-    twin_file_key = 'stress' if operation == 'fatigue' else operation
+        if config['available_operations'][operation]['tbrom'] in tbrom_names:
+            twin_file = twin
+            tbrom_name = config['available_operations'][operation]['tbrom']
+            break
     
-    if twin_file_key in available_operations:
-        twin_file = input_data['input_files']['twin_file'][twin_file_key]
-    else:
-        twin_file = None
-        print(f"Invalid operation: {operation}. Available operations: {available_operations}")
-    return twin_file
+    if twin_file is None:
+        raise ValueError(f"Operation '{operation}' is not supported by any twin file.")
 
+    return twin_file, tbrom_name
     
 def initiate_twin(input_data, twin_file):
-    # Initialize other parameters to None
-    rom_parameters = None
-    rom_inputs = None
-    field_inputs = None
-
-    # Extract potential inputs if they exist
-    twin_inputs = input_data.get('twin_inputs', {})
-    
-    if 'rom_parameters' in twin_inputs:
-        rom_parameters = twin_inputs['rom_parameters']
-    
-    if 'rom_inputs' in twin_inputs:
-        rom_inputs = twin_inputs['rom_inputs']
-    
-    if 'field_inputs' in twin_inputs:
-        field_inputs = twin_inputs['field_inputs']
-        
-    if 'json_config' in twin_inputs:
-        json_config = twin_inputs['json_config']
-        
-    # Implement logic to initiate twin from twin file
+    # Initialize other parameters to None)
     twin_model = TwinModel(twin_file)
     try:
-        twin_model.initialize_evaluation(parameters=rom_parameters, inputs=rom_inputs, field_inputs=field_inputs, json_config_filepath=None)
+        rom_parameters = input_data['twin_inputs'].get('rom_parameters')
+        rom_inputs = input_data['twin_inputs'].get('rom_inputs')
+        field_inputs = input_data['twin_inputs'].get('field_inputs')
+
+        twin_model.initialize_evaluation(
+            parameters=rom_parameters, 
+            inputs=rom_inputs, 
+            field_inputs=field_inputs
+        )
         tbrom_names = twin_model.tbrom_names
     except Exception as e:
-        twin_model = None
-        tbrom_names = None
-        print(f"Error initiating twin: {e}")
+        raise RuntimeError(f"Error initiating twin: {e}")
+
     return twin_model, tbrom_names
 
 def extract_mesh(rst_file):  

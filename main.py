@@ -5,13 +5,14 @@ from scripts import obtain_max_min
 def main():
     # Load configuration
     print("++ Loading Configuration")
-    config_dir =  os.path.join(os.path.dirname(__file__), 'config.yaml')
+    file_dir = os.path.dirname(__file__)
+    config_dir =  os.path.join(file_dir, 'config.yaml')
     config = utility.load_config(config_dir)
     
     # Load data_input
     print("++ Loading Data Input")
     input_file_dir = "data/input/"
-    input_dir =  os.path.join(os.path.dirname(__file__), input_file_dir, 'input_data.json')
+    input_dir =  os.path.join(file_dir, input_file_dir, 'input_data.json')
     input_data = utility.load_json(input_dir)
     
     # Validate input parameters
@@ -23,11 +24,11 @@ def main():
     
     # Initiate twin from twin file
     print("++ Initializing the Twin")
-    twin_file = utility.twin_file_handler(input_data, config) 
-    twin_file_dir = os.path.join(os.path.dirname(__file__), twin_file)
-    twin_model, tbrom_names = utility.initiate_twin(input_data, twin_file_dir)
-    rom_index = input_data['input_parameters']['rom_index']
-    rom_name = tbrom_names[rom_index]
+    twin_file, tbrom_name = utility.twin_file_handler(input_data, config, file_dir) 
+    twin_file_dir = os.path.join(file_dir, twin_file)
+    print(twin_file_dir)
+    twin_model, tbroms = utility.initiate_twin(input_data, twin_file_dir)
+    rom_name = tbrom_name
     twin_outputs = twin_model.outputs
     
     # Load the rst file and extract the mesh
@@ -110,7 +111,7 @@ def main():
    
     # Export DataFrame to JSON
     result_data.to_json(result_field_path, orient='records', lines=True)
-    print(f"DataFrames have been exported to {result_field_path}")
+    # print(f"DataFrames have been exported to {result_field_path}")
     
 if __name__ == "__main__":
     main()

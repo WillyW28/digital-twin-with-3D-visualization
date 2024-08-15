@@ -7,7 +7,7 @@
     "input_parameters": {
         "rom_index" : 0,
         "named_selection": "All_Body",
-        "operation": ["stress", "von_mises"],
+        "operation": ["displacement", "norm"],
         "deformation_scale": "True Scale"
     },
     "input_files": {

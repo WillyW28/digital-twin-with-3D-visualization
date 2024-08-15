@@ -1,23 +1,34 @@
 # config.yaml
 
+# Digital Twin Project 
+Model: 
+  name: Simply Supported Beam
+  type: Physical Based
+  domain: Structural
+  3d_vis: True
+
 # List of operations to perform
 available_operations: 
   displacement:
-    ux
-    uy
-    uz
-    norm
+    tbrom: SSB_6_Def1
+    units: mm
+    suboperations: [ux, uy, uz, norm]    
   stress:
-    von_mises
-    xx
-    yy
-    zz
-    xy
-    yz
-    xz
+    tbrom: SSB_6_Str1
+    units: MPa
+    suboperations: [von_mises, xx, yy, zz, xy, yz, xz]
   fatigue:
-    cycle
-    damage
+    tbrom: SSB_6_Str1
+    units: MPa
+    suboperations: [cycle, damage]
+    derived: True
+    script: fatigue.py
+
+# Twin files
+twin_files:
+  - data/raw/twin_file_dsp.twin
+  - data/raw/twin_file_str.twin
+
 availabe_named_selections:
   All_Body
   Frame
